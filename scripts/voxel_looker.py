@@ -24,7 +24,7 @@ def subplot_animate(data1, data2, data3=None):
             plt.title('slide number {}'.format(i))
             plt.subplot(1, 2, 2)
             plt.imshow(data2[i, :, :], cmap='gray', aspect='auto')
-            plt.axis('off')
+            #plt.axis('off')
             plt.title('slide number {}'.format(i))
             plt.show()
             plt.pause(0.01)
@@ -89,3 +89,4 @@ mask_data = mask_img.get_data()
 
 # use mask to find where the brain is... to filter out nonbrain
 
+subplot_animate(pp_data, tar_data)
