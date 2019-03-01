@@ -23,7 +23,7 @@ def fetch_data(data_path, example_dir, file_name, quant=True):
     img = (nib.load(file_p)).get_data()
     img = (2**16 - 1)*(img - img.min())/(img.max() - img.min())
     if quant:
-        return img.astype(np.uint8) # nii files don't have negative values
+        return img.astype(np.uint16) # nii files don't have negative values
     else:
         return img
 
@@ -33,7 +33,14 @@ def create_df(dir_list, quant=True):
     raw = '../raw_data/'
     prp = '../preprocessed_data/'
     
-    modalities = ['FLAIR_preprocessed.nii']
+    #modalities = ['FLAIR_preprocessed.nii.gz']
+
+    modalities = ['DP_preprocessed.nii.gz',
+                  'GADO_preprocessed.nii.gz',
+                  'T1_preprocessed.nii.gz',
+                  'T2_preprocessed.nii.gz',
+                  'FLAIR_preprocessed.nii.gz']
+
     
     img_names = [mod[:-4] for mod in modalities]
     img_names.insert(0, 'Concensus')
@@ -45,7 +52,7 @@ def create_df(dir_list, quant=True):
     for dr in dir_list:
     
         # get consensus
-        consensus = fetch_data(raw, dr, 'Consensus.nii')
+        consensus = fetch_data(raw, dr, 'Consensus.nii.gz')
     
         # get all modalities
         data = [fetch_data(prp, dr, mod, quant) for mod in modalities]
@@ -56,8 +63,9 @@ def create_df(dir_list, quant=True):
         # stack into dataframe
         df.loc[dr] = data
     
-    #df.to_pickle('~/Projects/MS/scripts/images_dataframe_uint8.pkl')
-    
+    df.to_pickle('./images_dataframe_uint16.pkl')
+    df.to_hdf('./images_dataframe_uint16.h5', 'table', append=True)    
+
     return df
 
 # get list of available directories
@@ -69,7 +77,9 @@ dir_list = [ di for di in dir_list if di[0] == '0']
 # form database
 dir_list = dir_list[0:2]
 #[data, df] = create_df(dir_list)
-#df = create_df(dir_list)
+print('loading data')
+df = create_df(dir_list)
+print('data loaded')
 
 #df_full = create_df(dir_list, quant=False)
 
