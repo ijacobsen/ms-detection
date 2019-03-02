@@ -3,6 +3,7 @@
 *.hd5
 *.png
 *.nii
+*.nii.gz
 
 # OS generated files #
 ######################

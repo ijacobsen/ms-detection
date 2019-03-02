@@ -28,21 +28,23 @@ def fetch_data(data_path, example_dir, file_name, quant=True):
         return img
 
 # fetch data and store in dataframe
-def create_df(dir_list, quant=True):
+def create_df(dir_list, quant=True, modal='all'):
     
     raw = '../raw_data/'
     prp = '../preprocessed_data/'
-    
-    #modalities = ['FLAIR_preprocessed.nii.gz']
 
-    modalities = ['DP_preprocessed.nii.gz',
-                  'GADO_preprocessed.nii.gz',
-                  'T1_preprocessed.nii.gz',
-                  'T2_preprocessed.nii.gz',
-                  'FLAIR_preprocessed.nii.gz']
+    if (modal == 'all'):
+        modalities = ['DP_preprocessed.nii.gz',
+                      'GADO_preprocessed.nii.gz',
+                      'T1_preprocessed.nii.gz',
+                      'T2_preprocessed.nii.gz',
+                      'FLAIR_preprocessed.nii.gz']
+
+    else:
+        modalities = ['FLAIR_preprocessed.nii.gz']
 
     
-    img_names = [mod[:-4] for mod in modalities]
+    img_names = [mod[:-7] for mod in modalities]
     img_names.insert(0, 'Concensus')
     
     # create dataframe
@@ -63,8 +65,8 @@ def create_df(dir_list, quant=True):
         # stack into dataframe
         df.loc[dr] = data
     
-    df.to_pickle('./images_dataframe_uint16.pkl')
-    df.to_hdf('./images_dataframe_uint16.h5', 'table', append=True)    
+    #df.to_pickle('./images_dataframe_uint16.pkl')
+    #df.to_hdf('./images_dataframe_uint16.h5', 'table', append=True)    
 
     return df
 
@@ -78,7 +80,7 @@ dir_list = [ di for di in dir_list if di[0] == '0']
 dir_list = dir_list[0:2]
 #[data, df] = create_df(dir_list)
 print('loading data')
-df = create_df(dir_list)
+df = create_df(dir_list, modal='flair')
 print('data loaded')
 
 #df_full = create_df(dir_list, quant=False)
