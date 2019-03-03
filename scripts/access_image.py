@@ -3,6 +3,7 @@ import numpy as np
 import nibabel as nib
 from matplotlib import pyplot as plt
 import pandas as pd
+from matplotlib.patches import Circle
 import pickle
 import sys
 
@@ -74,6 +75,12 @@ class patcher(object):
     def __init__(self, patch_size=(11, 11, 11)):
 
         self.patch_size = patch_size
+        self.consensus = 0
+        self.flair = 0
+        self.mask = 0
+        self.patches = 0
+        self.consensus_patches = 0
+        
 
     def load_image(self, path=False, highres=False, normalize=False):
 
@@ -94,13 +101,15 @@ class patcher(object):
 
         img_shape = img.shape
 
-        np.random.shuffle(coords)
+        #np.random.shuffle(coords)
         patch_list = []
         i = 0
         for coord in coords:
 
             sl_min = coord[0] - self.patch_size[0]/2
             sl_max = coord[0] + self.patch_size[0]/2 + 1
+
+            #print('min {}, max{}'.format(sl_min, sl_max))
 
             x_min = coord[1] - self.patch_size[1]/2
             x_max = coord[1] + self.patch_size[1]/2 + 1
@@ -131,6 +140,7 @@ class patcher(object):
 
         # use the mask to filter out black space
         mask = self.load_image(path=path_table.loc[patient]['Mask'])
+        self.mask = mask
         img_size = mask.shape
 
         # coordinates where the brain is present
@@ -140,6 +150,7 @@ class patcher(object):
 
             flair = self.load_image(path=path_table.loc[patient]['FLAIR_preprocessed'], 
                                     normalize=True)
+            self.flair = flair
 
         else:
 
@@ -150,11 +161,12 @@ class patcher(object):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
+            self.consensus = con
             pos_coords = tuple(zip(*(np.nonzero(con))))
 
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
-            min_dist = (2, 20, 20)
+            min_dist = (2, 10, 10)
 
             # downsample because coords are ordered, and below code is O(n^2) 
             ds_pos_coords = pos_coords[::40]
@@ -176,7 +188,7 @@ class patcher(object):
             # get negative patches and assign labels
             neg_patches = self.get_patches(img=flair, num_patches=num_patches, coords=neg_used)
             for ptch in neg_patches: ptch.label='0'
-            
+
             if (len(pos_patches) > num_patches/2):
                 patches_to_return = pos_patches[:num_patches/2] + neg_patches
                 num_pos_returned = num_patches/2
@@ -185,9 +197,20 @@ class patcher(object):
                 num_pos_returned = len(pos_patches)
             print('returning {} positive patches, {} negative patches'.format(num_pos_returned,
                   num_patches-num_pos_returned))
+          
+            patches = patches_to_return[:num_patches]
+            self.patches = patches
             
-            return patches_to_return[:num_patches]
+            if debug:
+                print('warning: DEBUG IS ON!')
+                coordinates = [ptch.coords for ptch in patches]
+                self.consensus_patches = self.get_patches(img=con, 
+                                                          coords=coordinates)
+                print('debug consensus patches fetched')
+            
+            return 0
 
+debug = True
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -201,11 +224,35 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient = patient_list[0]
+patient = patient_list[5]
 
 # get patches
-ex = patcher(patch_size = (21, 35, 35))
-patches = ex.patchify(path_table=df, patient=patient)
+ex = patcher(patch_size = (3, 33, 33))
+ex.patchify(path_table=df, patient=patient)
+con_patches = ex.consensus_patches
+patches = ex.patches
 
-#print(df.head())
+#show_patch(patches[12], con_patches[12])
+#show_patch(patches[3])
 
+
+def show_patch(ptch, con_ptch=False, animate=False):
+    
+    if con_ptch:
+        #show_patch(patches[12], con_patches[12])
+        center = ptch.array.shape[0]/2
+        plt.subplot(1, 2, 1)
+        plt.imshow(ptch.array[center, :, :], cmap='gray')
+        plt.subplot(1, 2, 2)
+        plt.imshow(con_ptch.array[center, :, :], cmap='gray')
+        
+    
+    elif not animate:
+        #show_patch(patches[3])
+        slide_center = ptch.array.shape[0]/2
+        center = (ptch.array.shape[1]/2, ptch.array.shape[2]/2)
+        fig, ax = plt.subplots(1)
+        ax.set_aspect('equal')
+        ax.imshow(ptch.array[slide_center, :, :], cmap='gray')
+        circ1 = Circle(center, 2, facecolor='None', edgecolor='r', lw=5, zorder=10)
+        ax.add_patch(circ1)
