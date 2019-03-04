@@ -8,15 +8,45 @@ import pickle
 import sys
 
 
-def animate(data):
-    #%matplotlib qt
-    for i in range(data[:, 0, 0].shape[0]):
-        plt.imshow(data[i, :, :], cmap='gray')
-        plt.axis('off')
-        plt.title('slide number {}'.format(i))
-        plt.show()
-        plt.pause(0.25)
-        plt.clf()
+def show_patch(ptch, con_ptch=False, animate=False):
+    
+    if con_ptch:
+        #show_patch(patches[12], con_patches[12])
+        center = ptch.array.shape[0]/2
+        plt.subplot(1, 2, 1)
+        plt.imshow(ptch.array[center, :, :], cmap='gray')
+        plt.subplot(1, 2, 2)
+        plt.imshow(con_ptch.array[center, :, :], cmap='gray')
+        
+    
+    elif not animate:
+        #show_patch(patches[3])
+        slide_center = ptch.array.shape[0]/2
+        center = (ptch.array.shape[1]/2, ptch.array.shape[2]/2)
+        fig, ax = plt.subplots(1)
+        ax.set_aspect('equal')
+        ax.imshow(ptch.array[slide_center, :, :], cmap='gray')
+        circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+        ax.add_patch(circ1)
+        
+    elif animate:
+        #show_patch(patches, animate=True)
+        slide_center = ptch[0].array.shape[0]/2
+        center = (ptch[0].array.shape[1]/2, ptch[0].array.shape[2]/2)
+        patches_to_show = ptch[:10] + ptch[-10:]
+        fig, ax = plt.subplots(1)
+        for sl in patches_to_show:
+            #fig, ax = plt.subplots(1)
+            ax.set_aspect('equal')
+            ax.imshow(sl.array[slide_center, :, :], cmap='gray')
+            if sl.label == '1':
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+            else:
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='g', lw=2, zorder=10)
+            ax.add_patch(circ1)
+            ax.set_title(sl.label)
+            plt.pause(0.8)
+            plt.cla()
 
 # fetch data and store in dataframe
 def create_df(dir_list, quant=True, modal='all'):
@@ -224,35 +254,17 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient = patient_list[5]
+patient = patient_list[0]
 
 # get patches
-ex = patcher(patch_size = (3, 33, 33))
+ex = patcher(patch_size = (1, 11, 11))
 ex.patchify(path_table=df, patient=patient)
 con_patches = ex.consensus_patches
 patches = ex.patches
 
+show_patch(patches, animate=True)
 #show_patch(patches[12], con_patches[12])
 #show_patch(patches[3])
 
 
-def show_patch(ptch, con_ptch=False, animate=False):
-    
-    if con_ptch:
-        #show_patch(patches[12], con_patches[12])
-        center = ptch.array.shape[0]/2
-        plt.subplot(1, 2, 1)
-        plt.imshow(ptch.array[center, :, :], cmap='gray')
-        plt.subplot(1, 2, 2)
-        plt.imshow(con_ptch.array[center, :, :], cmap='gray')
-        
-    
-    elif not animate:
-        #show_patch(patches[3])
-        slide_center = ptch.array.shape[0]/2
-        center = (ptch.array.shape[1]/2, ptch.array.shape[2]/2)
-        fig, ax = plt.subplots(1)
-        ax.set_aspect('equal')
-        ax.imshow(ptch.array[slide_center, :, :], cmap='gray')
-        circ1 = Circle(center, 2, facecolor='None', edgecolor='r', lw=5, zorder=10)
-        ax.add_patch(circ1)
+
