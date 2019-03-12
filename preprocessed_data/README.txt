@@ -8,7 +8,13 @@ Corrects registration errors between modalities for some patients.
 
 Version 1
 
-This file contains the pre-processed images for the 15 patients of the challenge training dataset. These patients are coming from three different MRI scanners located in three different centers (see https://portal.fli-iam.irisa.fr/msseg-challenge/data for more details on the centers and scanners). Patients starting with 01 come from a Siemens 3T Verio scanner, those starting with 07 from a Siemens Aera 1.5T scanner, and finally those starting with 08 from a Philips Ingenia 3T scanner.
+This file contains the pre-processed images for the 15 patients of the 
+challenge training dataset. These patients are coming from three different MRI 
+scanners located in three different centers 
+(see https://portal.fli-iam.irisa.fr/msseg-challenge/data for more details on the centers and scanners).
+ Patients starting with 01 come from a Siemens 3T Verio scanner, 
+ those starting with 07 from a Siemens Aera 1.5T scanner, 
+ and finally those starting with 08 from a Philips Ingenia 3T scanner.
 
 The provided images include, for each patient:
 
@@ -18,7 +24,8 @@ The provided images include, for each patient:
 - DP image
 - 3D T1 Gd image (post-contrast agent image)
 
-Manual segmentations may be found in the unprocessed dataset. The following pre-processing was applied for each patient:
+Manual segmentations may be found in the unprocessed dataset. 
+The following pre-processing was applied for each patient:
 
 - denoising with the NL-means algorithm [1] of each image
 - rigid registration [2] of each image towards the FLAIR image 

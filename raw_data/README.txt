@@ -2,7 +2,10 @@ MS SEG challenge training dataset
 
 Version 3
 
-Adds consensus segmentations made from manual segmentations using logarithmic opinion pool based STAPLE. These segmentations will be used for evaluation. Also re-ordered manual segmentations so that the numbers correspond to the same expert for each patient.
+Adds consensus segmentations made from manual segmentations using logarithmic 
+opinion pool based STAPLE. These segmentations will be used for evaluation. 
+Also re-ordered manual segmentations so that the numbers correspond to the 
+same expert for each patient.
 
 ----------
 
@@ -14,7 +17,12 @@ Corrects some errors in manual segmentation orientation matrices for two patient
 
 Version 1
 
-This file contains the unprocessed images for the 15 patients of the challenge training dataset. These patients are coming from three different MRI scanners located in three different centers (see https://portal.fli-iam.irisa.fr/msseg-challenge/data for more details on the centers and scanners). Patients starting with 01 come from a Siemens 3T Verio scanner, those starting with 07 from a Siemens Aera 1.5T scanner, and finally those starting with 08 from a Philips Ingenia 3T scanner.
+This file contains the unprocessed images for the 15 patients of the challenge training dataset. 
+These patients are coming from three different MRI scanners located in three different centers 
+(see https://portal.fli-iam.irisa.fr/msseg-challenge/data for more details on the centers and scanners). 
+Patients starting with 01 come from a Siemens 3T Verio scanner, 
+those starting with 07 from a Siemens Aera 1.5T scanner, 
+and finally those starting with 08 from a Philips Ingenia 3T scanner.
 
 The provided images include, for each patient:
 

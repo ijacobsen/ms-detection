@@ -4,6 +4,7 @@
 *.png
 *.nii
 *.nii.gz
+*.pkl
 
 # OS generated files #
 ######################
