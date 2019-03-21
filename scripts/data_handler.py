@@ -289,7 +289,7 @@ class patcher(object):
             
             return 0
 
-
+'''
 debug = False
 
 # get list of available directories
@@ -312,9 +312,9 @@ ex.patchify(path_table=df, patient=patient)
 con_patches = ex.consensus_patches
 patches = ex.patches_xyz
 
-#show_patch(patches, animate=True)
-#show_patch(patches[12], con_patches[12])
-#show_patch(patches[3])
+#show_patch_xyz(patches, animate=True)
+#show_patch_xyz(patches[12], con_patches[12])
+#show_patch_xyz(patches[3])
 
-
+'''
 
