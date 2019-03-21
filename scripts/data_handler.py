@@ -48,6 +48,47 @@ def show_patch(ptch, con_ptch=False, animate=False):
             plt.pause(0.8)
             plt.cla()
 
+def show_patch_xyz(ptch, con_ptch=False, animate=False):
+    
+    if con_ptch:
+        #show_patch(patches[12], con_patches[12])
+        center = ptch.array.shape[2]/2
+        plt.subplot(1, 2, 1)
+        plt.imshow(ptch.array[:, :, center], cmap='gray')
+        plt.subplot(1, 2, 2)
+        plt.imshow(con_ptch.array[:, :, center], cmap='gray')
+        
+    
+    elif not animate:
+        #show_patch(patches[3])
+        slide_center = ptch.array.shape[2]/2
+        center = (ptch.array.shape[0]/2, ptch.array.shape[1]/2)
+        fig, ax = plt.subplots(1)
+        ax.set_aspect('equal')
+        ax.imshow(ptch.array[:, :, slide_center], cmap='gray')
+        circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+        ax.add_patch(circ1)
+        
+    elif animate:
+        #show_patch(patches, animate=True)
+        slide_center = ptch[0].array.shape[2]/2
+        center = (ptch[0].array.shape[0]/2, ptch[0].array.shape[1]/2)
+        patches_to_show = ptch[:10] + ptch[-10:]
+        fig, ax = plt.subplots(1)
+        for sl in patches_to_show:
+            #fig, ax = plt.subplots(1)
+            ax.set_aspect('equal')
+            ax.imshow(sl.array[:, :, slide_center], cmap='gray')
+            if sl.label == '1':
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+            else:
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='g', lw=2, zorder=10)
+            ax.add_patch(circ1)
+            ax.set_title(sl.label)
+            plt.pause(0.8)
+            plt.cla()
+
+
 # fetch data and store in dataframe
 def create_df(dir_list, quant=True, modal='all'):
     
@@ -104,11 +145,12 @@ class patcher(object):
 
     def __init__(self, patch_size=(11, 11, 11)):
 
-        self.patch_size = patch_size
+        self.patch_size = patch_size #(x, y, slice)
         self.consensus = 0
         self.flair = 0
         self.mask = 0
         self.patches = 0
+        self.patches_xyz = 0
         self.consensus_patches = 0
         
 
@@ -136,16 +178,16 @@ class patcher(object):
         i = 0
         for coord in coords:
 
-            sl_min = coord[0] - self.patch_size[0]/2
-            sl_max = coord[0] + self.patch_size[0]/2 + 1
+            sl_min = coord[0] - self.patch_size[2]/2
+            sl_max = coord[0] + self.patch_size[2]/2 + 1
 
             #print('min {}, max{}'.format(sl_min, sl_max))
 
-            x_min = coord[1] - self.patch_size[1]/2
-            x_max = coord[1] + self.patch_size[1]/2 + 1
+            x_min = coord[1] - self.patch_size[0]/2
+            x_max = coord[1] + self.patch_size[0]/2 + 1
 
-            y_min = coord[2] - self.patch_size[2]/2
-            y_max = coord[2] + self.patch_size[2]/2 + 1
+            y_min = coord[2] - self.patch_size[1]/2
+            y_max = coord[2] + self.patch_size[1]/2 + 1
             
             # make sure slice indices are valid
             if ((np.array([sl_min, x_min, y_min]) > 0).all() and 
@@ -231,16 +273,24 @@ class patcher(object):
             patches = patches_to_return[:num_patches]
             self.patches = patches
             
+            # reshape patches to meet (x, y, z) criteria
+            self.patches_xyz = patches
+            for i in np.arange(len(self.patches_xyz)):
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 0, 1)
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
+            '''
             if debug:
                 print('warning: DEBUG IS ON!')
                 coordinates = [ptch.coords for ptch in patches]
                 self.consensus_patches = self.get_patches(img=con, 
                                                           coords=coordinates)
                 print('debug consensus patches fetched')
+            '''
             
             return 0
 
-debug = True
+
+debug = False
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -257,12 +307,12 @@ patient_list = df.index
 patient = patient_list[0]
 
 # get patches
-ex = patcher(patch_size = (1, 11, 11))
+ex = patcher(patch_size = (25, 25, 11))
 ex.patchify(path_table=df, patient=patient)
 con_patches = ex.consensus_patches
-patches = ex.patches
+patches = ex.patches_xyz
 
-show_patch(patches, animate=True)
+#show_patch(patches, animate=True)
 #show_patch(patches[12], con_patches[12])
 #show_patch(patches[3])
 
