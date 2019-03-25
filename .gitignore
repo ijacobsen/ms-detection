@@ -5,6 +5,9 @@
 *.nii
 *.nii.gz
 *.pkl
+slurm*
+
+/py2_ms
 
 # OS generated files #
 ######################
