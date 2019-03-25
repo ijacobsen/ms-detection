@@ -63,7 +63,7 @@ layer    type    input size          maps    size    stride     pad
 
 
 # input layer
-input_layer = Input(np.hstack((1, patch_size)))
+input_layer = Input(np.hstack((patch_size, 1)))
 
 # FAILS HERE ^^^
 
