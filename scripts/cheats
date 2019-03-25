@@ -3,9 +3,9 @@ NyTobia0990!
 
 ssh prince.hpc.nyu.edu
 
-sbatch myscript.s
+sbatch run.s
 
-squeue -u $USER
+squeue -u ij405
 
 https://github.com/cvalenzuela/hpc
 
