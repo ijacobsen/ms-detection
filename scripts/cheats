@@ -1,0 +1,13 @@
+ssh ij405@gw.hpc.nyu.edu
+NyTobia0990!
+
+ssh prince.hpc.nyu.edu
+
+sbatch myscript.s
+
+squeue -u $USER
+
+https://github.com/cvalenzuela/hpc
+
+
+

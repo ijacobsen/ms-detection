@@ -13,6 +13,7 @@ import data_handler as dh
 import os
 
 patch_size = (11, 11, 11)
+num_channels = 1
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -39,12 +40,15 @@ x_train = [ptch.array for ptch in patches]
 xtrain = np.ndarray((len(x_train),
                      x_train[0].shape[0],
                      x_train[0].shape[1],
-                     x_train[0].shape[2]))
+                     x_train[0].shape[2],
+                     num_channels))
 ytrain = [int(ptch.label) for ptch in patches]
 
+# TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded in
+# to account for only 1 channel (modality) being used... fix this!
 # fill xdata with patch data
 for i in range(len(xtrain)):
-    xtrain[i] = x_train[i]
+    xtrain[i, :, :, :, 0] = x_train[i]
 ytrain = np.array(ytrain)
 
 # convert target variable into one-hot
@@ -63,9 +67,7 @@ layer    type    input size          maps    size    stride     pad
 
 
 # input layer
-input_layer = Input(np.hstack((patch_size, 1)))
-
-# FAILS HERE ^^^
+input_layer = Input(np.hstack((patch_size, num_channels)))
 
 # convolutional layer
 conv_layer1 = Conv3D(filters=32, kernel_size=(3, 3, 3), 
@@ -99,4 +101,5 @@ output_layer = Dense(units=2, activation='softmax')(dense_layer1)
 model = Model(inputs=input_layer, outputs=output_layer)
 
 model.compile(loss=categorical_crossentropy, optimizer=Adadelta(lr=0.1), metrics=['acc'])
-#model.fit(x=xtrain, y=y_train, batch_size=128, epochs=50, validation_split=0.2)
+
+model.fit(x=xtrain, y=y_train, batch_size=8, epochs=50, validation_split=0.2)
