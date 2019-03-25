@@ -4,8 +4,6 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from keras.losses import categorical_crossentropy
 from keras.optimizers import Adadelta
 from keras.models import Model
-import plotly.graph_objs as go
-from matplotlib.pyplot import cm
 import numpy as np
 import keras
 
