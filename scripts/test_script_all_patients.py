@@ -1,3 +1,11 @@
+'''
+this is a sloppy script which was put together quickly on 3/28/19
+
+it will be rewritten
+
+now
+'''
+
 from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
 from keras.layers import Dropout, Input, BatchNormalization
 from sklearn.metrics import confusion_matrix, accuracy_score
@@ -67,18 +75,6 @@ for patient in patient_list:
         y_train_all = np.concatenate((y_train_all, y_train), 0)
 
 #%% CNN STUFF
-
-
-'''
-layer    type    input size          maps    size    stride     pad
-0        input   c x 11 x 11 x 11    -        -       -         -
-1        conv    c x 11 x 11 x 11    32       3^3     1^3       1^3
-2        mp      32 x 5 x 5 x 5      -        2^3     2^3       0
-3        conv    64 x 5 x 5 x 5      64       3^3     1^3       1^3
-4        mp      64 x 2 x 2 x 2      -        2^3     2^3       0
-5        fc      256                 256      1       -         -
-6        soft    2                   2        1       -         -
-'''
 
 # input layer
 input_layer = Input(np.hstack((patch_size, num_channels)))
