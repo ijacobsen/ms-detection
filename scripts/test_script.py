@@ -64,8 +64,11 @@ y_train = keras.utils.to_categorical(ytrain, 2)
 
 # initiate model
 model_name = 'test_model'
-model = ml.cnn_model(name=model_name, mode='train')
+#model = ml.cnn_model(name=model_name, mode='train')
 
 # train model
-model.train_network(xtrain=xtrain, ytrain=y_train, batch_size=2, epochs=20)
+#model.train_network(xtrain=xtrain, ytrain=y_train, batch_size=8, epochs=50)
+
+# load model
+model = ml.cnn_model(name=model_name, mode='load')
 

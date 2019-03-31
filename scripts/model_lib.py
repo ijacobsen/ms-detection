@@ -113,7 +113,7 @@ class cnn_model(object):
     def load_model(self):
 
         # load model from JSON file
-        with open('{}_architeture.json'.format(self.name), 'r') as f:
+        with open('{}_architecture.json'.format(self.name), 'r') as f:
             self.model = model_from_json(f.read())
 
         # load weights into model

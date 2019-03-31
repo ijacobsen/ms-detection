@@ -20,5 +20,5 @@ module load numpy/python2.7/intel/1.14.0
 source ~/ms_det/py2_ms/bin/activate
 
 cd ~/ms_det/scripts/
-python ~/ms_det/scripts/test_script_all_patients.py
+python ~/ms_det/scripts/test_script.py
 
