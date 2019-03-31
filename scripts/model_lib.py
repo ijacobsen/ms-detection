@@ -3,7 +3,7 @@ from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
 from keras.layers import Dropout, Input, BatchNormalization
 from keras.losses import categorical_crossentropy
 from keras.optimizers import Adadelta
-from keras.models import Model
+from keras.models import Model, model_from_json
 import keras
 
 '''
@@ -23,21 +23,26 @@ layer    type    input size          maps    size    stride     pad
 
 class cnn_model(object):
     
-    def __init__(self, patch_size=(11, 11, 11), num_channels=1):
-        self.patch_size = patch_size
-        self.num_channels = num_channels
-        self.model = False
-        self.build_graph()
-        self.compile_graph()
-        print('CNN model created')
-
+    def __init__(self, mode='train', patch_size=(11, 11, 11),
+                 num_channels=1, name='mdl'):
+        self.name = name
+        if (mode == 'train'):
+            self.patch_size = patch_size
+            self.num_channels = num_channels
+            self.model = False
+            self.build_graph()
+            self.compile_graph()
+            print('CNN model created')
+        elif (mode == 'load'):
+            self.load_model()
+            print('model loaded')
 
     def build_graph(self):
 
-        ''' this is where the architecture is defined '''
-    
+        ''' this is where the architecture is defined in the paper '''
+
         print('defining model')
-    
+
         # input layer
         input_layer = Input(np.hstack((self.patch_size, self.num_channels)))
     
@@ -75,15 +80,12 @@ class cnn_model(object):
 
         self.model = Model(inputs=input_layer, outputs=output_layer)
 
-        print('model defined')
-
     def compile_graph(self):
 
         print('compiling graph')
         self.model.compile(loss=categorical_crossentropy,
                            optimizer=Adadelta(lr=0.1),
                            metrics=['acc'])
-        print('graph compiled')
     
     def train_network(self, xtrain=0, ytrain=0, batch_size=16,
                       epochs=100, val=0.2):
@@ -94,5 +96,25 @@ class cnn_model(object):
                        batch_size=batch_size,
                        epochs=epochs,
                        validation_split=val)
-        print('model trained')
-    
+
+        self.save_model()
+
+    def save_model(self):
+
+        print('saving model')
+
+        # save weights
+        self.model.save_weights('{}_weights.h5'.format(self.name))
+
+        # save architecture
+        with open('{}_architecture.json'.format(self.name), 'w') as f:
+            f.write(self.model.to_json())
+
+    def load_model(self):
+
+        # load model from JSON file
+        with open('{}_architeture.json'.format(self.name), 'r') as f:
+            self.model = model_from_json(f.read())
+
+        # load weights into model
+        self.model.load_weights('{}_weights.h5'.format(self.name))
