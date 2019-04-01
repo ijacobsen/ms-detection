@@ -205,7 +205,7 @@ class patcher(object):
 
         return patch_list
 
-    def patchify(self, path_table, patient, num_patches=500,
+    def patchify(self, path_table, patient, num_patches=300,
                   modals=False, training=True, testing=False):
 
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
@@ -238,10 +238,10 @@ class patcher(object):
 
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
-            min_dist = (2, 10, 10)
+            min_dist = (2, 6, 6)
 
             # downsample because coords are ordered, and below code is O(n^2) 
-            ds_pos_coords = pos_coords[::40]
+            ds_pos_coords = pos_coords[::30]
 
             # finds good candidates... slow O(n^2) in ds_pos_coords
             pos_used = [pos_coords[0], pos_coords[-1]]

@@ -23,9 +23,9 @@ print('data loaded')
 # choose a patient
 patient_list = df.index
 
-for i in range(len(patient_list)):
+for k in range(len(patient_list)):
 
-    pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != i]
+    pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != k]
 
     first_iteration = True
     for patient in pats_lv1out:
@@ -71,12 +71,12 @@ for i in range(len(patient_list)):
     ### CNN STUFF
     
     # initiate model
-    model_name = 'lv1out_{}'.format(patient_list[i])
+    model_name = 'lv1out_{}'.format(patient_list[k])
     model = ml.cnn_model(name=model_name, mode='train')
     
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all, 
-                        batch_size=8, epochs=50)
+                        batch_size=16, epochs=100)
     
     # load model
     # model = ml.cnn_model(name=model_name, mode='load')
