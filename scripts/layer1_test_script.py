@@ -20,25 +20,23 @@ print('loading data')
 df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
-# iterate over patients
+# choose a patient
 patient_list = df.index
 
 for k in range(len(patient_list)):
 
-    # list of patients to train on (one patient is left out)
     pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != k]
 
     first_iteration = True
-    # iterate leaving one out
     for patient in pats_lv1out:
     
         # get patches
         ex = dh.patcher(patch_size=patch_size)
         ex.patchify(path_table=df, patient=patient)
         patches = ex.patches_xyz
-
+    
         # TODO SHUFFLE PATCHES
-
+    
         # stack example patches to feed into NN
         x_train = [ptch.array for ptch in patches]
         xtrain = np.ndarray((len(x_train),
@@ -48,21 +46,20 @@ for k in range(len(patient_list)):
                              num_channels))
         ytrain = [int(ptch.label) for ptch in patches]
     
-        # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded
-        # in to account for only 1 channel (modality) being used... fix this!
+        # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded in
+        # to account for only 1 channel (modality) being used... fix this!
         # fill xdata with patch data
         for i in range(len(xtrain)):
             xtrain[i, :, :, :, 0] = x_train[i]
         ytrain = np.array(ytrain)
-
+    
         # convert target variable into one-hot
         y_train = keras.utils.to_categorical(ytrain, 2)
     
         # before stacking, 
         # xtrain (500, 11, 11, 11, 1)
         # y_train (500, 2)
-
-        # stack patients images for training
+    
         if first_iteration:
             xtrain_all = xtrain
             ytrain_all = y_train

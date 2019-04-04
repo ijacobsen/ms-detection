@@ -4,85 +4,89 @@ import nibabel as nib
 from matplotlib import pyplot as plt
 import pandas as pd
 from matplotlib.patches import Circle
-import pickle
-import sys
 
 
 def show_patch(ptch, con_ptch=False, animate=False):
-    
+
     if con_ptch:
-        #show_patch(patches[12], con_patches[12])
+        # show_patch(patches[12], con_patches[12])
         center = ptch.array.shape[0]/2
         plt.subplot(1, 2, 1)
         plt.imshow(ptch.array[center, :, :], cmap='gray')
         plt.subplot(1, 2, 2)
         plt.imshow(con_ptch.array[center, :, :], cmap='gray')
-        
-    
+
+
     elif not animate:
-        #show_patch(patches[3])
+        # show_patch(patches[3])
         slide_center = ptch.array.shape[0]/2
         center = (ptch.array.shape[1]/2, ptch.array.shape[2]/2)
         fig, ax = plt.subplots(1)
         ax.set_aspect('equal')
         ax.imshow(ptch.array[slide_center, :, :], cmap='gray')
-        circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+        circ1 = Circle(center, 3, facecolor='None', edgecolor='r',
+                       lw=2, zorder=10)
         ax.add_patch(circ1)
-        
+
     elif animate:
-        #show_patch(patches, animate=True)
+        # show_patch(patches, animate=True)
         slide_center = ptch[0].array.shape[0]/2
         center = (ptch[0].array.shape[1]/2, ptch[0].array.shape[2]/2)
         patches_to_show = ptch[:10] + ptch[-10:]
         fig, ax = plt.subplots(1)
         for sl in patches_to_show:
-            #fig, ax = plt.subplots(1)
+            # fig, ax = plt.subplots(1)
             ax.set_aspect('equal')
             ax.imshow(sl.array[slide_center, :, :], cmap='gray')
             if sl.label == '1':
-                circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='r',
+                               lw=2, zorder=10)
             else:
-                circ1 = Circle(center, 3, facecolor='None', edgecolor='g', lw=2, zorder=10)
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='g',
+                               lw=2, zorder=10)
             ax.add_patch(circ1)
             ax.set_title(sl.label)
             plt.pause(0.8)
             plt.cla()
 
+
 def show_patch_xyz(ptch, con_ptch=False, animate=False):
-    
+
     if con_ptch:
-        #show_patch(patches[12], con_patches[12])
+        # show_patch(patches[12], con_patches[12])
         center = ptch.array.shape[2]/2
         plt.subplot(1, 2, 1)
         plt.imshow(ptch.array[:, :, center], cmap='gray')
         plt.subplot(1, 2, 2)
         plt.imshow(con_ptch.array[:, :, center], cmap='gray')
-        
-    
+
     elif not animate:
-        #show_patch(patches[3])
+        # show_patch(patches[3])
         slide_center = ptch.array.shape[2]/2
         center = (ptch.array.shape[0]/2, ptch.array.shape[1]/2)
         fig, ax = plt.subplots(1)
         ax.set_aspect('equal')
         ax.imshow(ptch.array[:, :, slide_center], cmap='gray')
-        circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+        circ1 = Circle(center, 3, facecolor='None', edgecolor='r',
+                       lw=2, zorder=10)
         ax.add_patch(circ1)
-        
+
     elif animate:
-        #show_patch(patches, animate=True)
+        # show_patch(patches, animate=True)
         slide_center = ptch[0].array.shape[2]/2
         center = (ptch[0].array.shape[0]/2, ptch[0].array.shape[1]/2)
         patches_to_show = ptch[:10] + ptch[-10:]
         fig, ax = plt.subplots(1)
         for sl in patches_to_show:
-            #fig, ax = plt.subplots(1)
+            # fig, ax = plt.subplots(1)
             ax.set_aspect('equal')
             ax.imshow(sl.array[:, :, slide_center], cmap='gray')
             if sl.label == '1':
-                circ1 = Circle(center, 3, facecolor='None', edgecolor='r', lw=2, zorder=10)
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='r',
+                               lw=2, zorder=10)
             else:
-                circ1 = Circle(center, 3, facecolor='None', edgecolor='g', lw=2, zorder=10)
+                circ1 = Circle(center, 3, facecolor='None', edgecolor='g',
+                               lw=2, zorder=10)
             ax.add_patch(circ1)
             ax.set_title(sl.label)
             plt.pause(0.8)
@@ -91,7 +95,7 @@ def show_patch_xyz(ptch, con_ptch=False, animate=False):
 
 # fetch data and store in dataframe
 def create_df(dir_list, quant=True, modal='all'):
-    
+
     raw = '../raw_data/'
     prp = '../preprocessed_data/'
 
@@ -108,10 +112,10 @@ def create_df(dir_list, quant=True, modal='all'):
     img_names = [mod[:-7] for mod in modalities]
     img_names.insert(0, 'Consensus')
     img_names.insert(1, 'Mask')
-    
+
     # create dataframe
     df = pd.DataFrame(index=dir_list, columns=img_names)
-    
+
     # for each example:
     for dr in dir_list:
 
@@ -129,12 +133,13 @@ def create_df(dir_list, quant=True, modal='all'):
         data.insert(1, mask)
 
         # stack into dataframe
-        df.loc[dr] = data 
+        df.loc[dr] = data
 
     return df
 
+
 class patch(object):
-    
+
     def __init__(self):
         self.coords = np.nan
         self.array = np.nan
@@ -145,14 +150,13 @@ class patcher(object):
 
     def __init__(self, patch_size=(11, 11, 11)):
 
-        self.patch_size = patch_size #(x, y, slice)
+        self.patch_size = patch_size  # (x, y, slice)
         self.consensus = 0
         self.flair = 0
         self.mask = 0
         self.patches = 0
         self.patches_xyz = 0
         self.consensus_patches = 0
-        
 
     def load_image(self, path=False, highres=False, normalize=False):
 
@@ -165,15 +169,18 @@ class patcher(object):
         if (normalize):
             img = (2**8 - 1)*(img - img.min())/(img.max() - img.min())
         if (not highres):
-            return img.astype(np.uint8) # nii files don't have negative values
+            return img.astype(np.uint8)  # nii files don't have negative values
         else:
             return img
 
-    def get_patches(self, img, coords, num_patches=500):
+    def get_patches(self, img, coords, num_patches='test'):
+
+        if (num_patches == 'test'):
+            num_patches = len(coords)
 
         img_shape = img.shape
 
-        #np.random.shuffle(coords)
+        # np.random.shuffle(coords)
         patch_list = []
         i = 0
         for coord in coords:
@@ -181,16 +188,16 @@ class patcher(object):
             sl_min = coord[0] - self.patch_size[2]/2
             sl_max = coord[0] + self.patch_size[2]/2 + 1
 
-            #print('min {}, max{}'.format(sl_min, sl_max))
+            # print('min {}, max{}'.format(sl_min, sl_max))
 
             x_min = coord[1] - self.patch_size[0]/2
             x_max = coord[1] + self.patch_size[0]/2 + 1
 
             y_min = coord[2] - self.patch_size[1]/2
             y_max = coord[2] + self.patch_size[1]/2 + 1
-            
+
             # make sure slice indices are valid
-            if ((np.array([sl_min, x_min, y_min]) > 0).all() and 
+            if ((np.array([sl_min, x_min, y_min]) > 0).all() and
                 (np.array([sl_max, x_max, y_max]) < np.array(img_shape)).all()):
 
                 new_patch = patch()
@@ -206,14 +213,13 @@ class patcher(object):
         return patch_list
 
     def patchify(self, path_table, patient, num_patches=300,
-                  modals=False, training=True, testing=False):
+                 modals=False, mode='training'):
 
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
 
         # use the mask to filter out black space
         mask = self.load_image(path=path_table.loc[patient]['Mask'])
         self.mask = mask
-        img_size = mask.shape
 
         # coordinates where the brain is present
         valid_coords = tuple(zip(*(np.nonzero(mask))))
@@ -229,7 +235,7 @@ class patcher(object):
             print('we only support accessing FLAIR right now !')
 
         # if training, filter out similar pixels
-        if (training):
+        if (mode == 'training'):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
@@ -240,7 +246,7 @@ class patcher(object):
             # distance between coordinates to use in training
             min_dist = (2, 6, 6)
 
-            # downsample because coords are ordered, and below code is O(n^2) 
+            # downsample because coords are ordered, and below code is O(n^2)
             ds_pos_coords = pos_coords[::30]
 
             # finds good candidates... slow O(n^2) in ds_pos_coords
@@ -248,28 +254,35 @@ class patcher(object):
             [pos_used.append(coord) for coord in ds_pos_coords if (np.apply_along_axis(np.any, 1, 
              np.abs(np.array(coord) - np.array(pos_used)) > np.array(min_dist)).all())]
 
-            # get patches and assign labels
-            pos_patches = self.get_patches(img=flair, num_patches=num_patches, coords=pos_used)
-            for ptch in pos_patches: ptch.label='1'
+            # get patches
+            pos_patches = self.get_patches(img=self.flair, num_patches=num_patches,
+                                           coords=pos_used)
+
+            # assigned labels to patches
+            for ptch in pos_patches:
+                ptch.label = '1'
 
             # locate negative patches
-            contenders_idx = np.random.randint(0, len(valid_coords), 2*num_patches)
+            contenders_idx = np.random.randint(0, len(valid_coords),
+                                               2*num_patches)
             contenders = [valid_coords[idx] for idx in contenders_idx]
             neg_used = [i for i in contenders if i not in pos_used]
 
             # get negative patches and assign labels
-            neg_patches = self.get_patches(img=flair, num_patches=num_patches, coords=neg_used)
-            for ptch in neg_patches: ptch.label='0'
+            neg_patches = self.get_patches(img=self.flair, num_patches=num_patches,
+                                           coords=neg_used)
+            for ptch in neg_patches:
+                ptch.label = '0'
 
             if (len(pos_patches) > num_patches/2):
                 patches_to_return = pos_patches[:num_patches/2] + neg_patches
                 num_pos_returned = num_patches/2
             else:
-                patches_to_return = pos_patches + neg_patches  
+                patches_to_return = pos_patches + neg_patches
                 num_pos_returned = len(pos_patches)
             print('returning {} positive patches, {} negative patches'.format(num_pos_returned,
                   num_patches-num_pos_returned))
-          
+
             patches = patches_to_return[:num_patches]
             self.patches = patches
             
@@ -286,8 +299,27 @@ class patcher(object):
                                                           coords=coordinates)
                 print('debug consensus patches fetched')
             '''
-            
+
             return 0
+
+        elif (mode == 'testing'):
+
+            # load the consensus
+            con = self.load_image(path=path_table.loc[patient]['Consensus'])
+            self.consensus = con
+            pos_coords = tuple(zip(*(np.nonzero(con))))
+
+            # get coordinates
+            flair_coords = tuple(zip(*(self.flair)))
+            
+            # get patches
+            patches = self.get_patches(img=self.flair, 
+                                       num_patches='test',
+                                       coords=flair_coords)
+
+            for ptch in patches:
+                if ## dsalkjhasdfkjlhsdfkjlhasdf todo
+                ptch.label = '1'
 
 '''
 debug = False
