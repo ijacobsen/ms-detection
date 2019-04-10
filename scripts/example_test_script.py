@@ -1,5 +1,6 @@
 import model_lib as ml
 import data_handler as dh
+import os
 
 #%% load data
 
@@ -16,6 +17,21 @@ print('data loaded')
 patient = dir_list[0]
 
 # load patients data
+
+# get patches
+ex = dh.patcher(mode='testing', patch_size=(11, 11, 11))
+ex.patchify(path_table=df, patient=patient)
+patches = ex.patches_xyz
+
+# TODO SHUFFLE PATCHES
+ #%%
+# stack example patches to feed into NN
+x_train = [ptch.array for ptch in patches]
+xtrain = np.ndarray((len(x_train),
+                     x_train[0].shape[0],
+                     x_train[0].shape[1],
+                     x_train[0].shape[2],
+                     num_channels))
 
 #%% load network
 

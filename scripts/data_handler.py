@@ -148,8 +148,9 @@ class patch(object):
 
 class patcher(object):
 
-    def __init__(self, patch_size=(11, 11, 11)):
+    def __init__(self, mode='training', patch_size=(11, 11, 11)):
 
+        self.mode = mode
         self.patch_size = patch_size  # (x, y, slice)
         self.consensus = 0
         self.flair = 0
@@ -213,7 +214,7 @@ class patcher(object):
         return patch_list
 
     def patchify(self, path_table, patient, num_patches=300,
-                 modals=False, mode='training'):
+                 modals=False):
 
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
 
@@ -235,7 +236,7 @@ class patcher(object):
             print('we only support accessing FLAIR right now !')
 
         # if training, filter out similar pixels
-        if (mode == 'training'):
+        if (self.mode == 'training'):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
@@ -302,7 +303,7 @@ class patcher(object):
 
             return 0
 
-        elif (mode == 'testing'):
+        elif (self.mode == 'testing'):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
@@ -310,7 +311,8 @@ class patcher(object):
             pos_coords = tuple(zip(*(np.nonzero(con))))
 
             # get coordinates
-            flair_coords = tuple(zip(*(self.flair)))
+            # sloppy way to get all coordinates, but it works
+            flair_coords = tuple(zip(*(np.where(self.flair >= 0))))
             
             # get patches
             patches = self.get_patches(img=self.flair, 
@@ -318,9 +320,21 @@ class patcher(object):
                                        coords=flair_coords)
 
             for ptch in patches:
-                if ## dsalkjhasdfkjlhsdfkjlhasdf todo
-                ptch.label = '1'
+                if ptch.coords in pos_coords:
+                    ptch.label = '1'
+                else:
+                    ptch.label = '0'
 
+            self.patches = patches
+
+            # reshape patches to meet (x, y, z) criteria
+            self.patches_xyz = patches
+            for i in np.arange(len(self.patches_xyz)):
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 0, 1)
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
+                
+            return 0
+            
 '''
 debug = False
 
