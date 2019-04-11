@@ -305,22 +305,43 @@ class patcher(object):
 
         elif (self.mode == 'testing'):
 
+            print('preparing test image')
+
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
             self.consensus = con
-            pos_coords = tuple(zip(*(np.nonzero(con))))
+            pos_coords = tuple(zip(*(np.nonzero(self.consensus))))
 
+            # i am fetching mask coordinates because all coordinates
+            # are way too many... 40 million
             # get coordinates
             # sloppy way to get all coordinates, but it works
-            flair_coords = tuple(zip(*(np.where(self.flair >= 0))))
-            
-            # get patches
+            # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
+            mask_coords = tuple(zip(*(np.nonzero(self.mask))))
+
+            print('fetching {} patches'.format(len))
+
+            # get patches... based on mask_coords
             patches = self.get_patches(img=self.flair, 
                                        num_patches='test',
-                                       coords=flair_coords)
+                                       coords=mask_coords)
+            '''
+            patches = ex.get_patches(img=ex.flair, 
+                                       num_patches='test',
+                                       coords=mask_coords)
 
             for ptch in patches:
-                if ptch.coords in pos_coords:
+                if ex.consensus[ptch.coords]:
+                    ptch.label = '1'
+                else:
+                    ptch.label = '0'
+
+            check = 0
+            for ptch in patches: check = check + int(ptch.label)
+            '''
+
+            for ptch in patches:
+                if self.consensus[ptch.coords]:
                     ptch.label = '1'
                 else:
                     ptch.label = '0'
