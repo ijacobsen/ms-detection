@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
 from keras.layers import Dropout, Input, BatchNormalization
 from keras.losses import categorical_crossentropy
@@ -24,7 +25,7 @@ layer    type    input size          maps    size    stride     pad
 class cnn_model(object):
     
     def __init__(self, mode='train', patch_size=(11, 11, 11),
-                 num_channels=1, name='mdl'):
+                 num_channels=1, name='mdl', path='none'):
         self.name = name
         if (mode == 'train'):
             self.patch_size = patch_size
@@ -34,6 +35,7 @@ class cnn_model(object):
             self.compile_graph()
             print('CNN model created')
         elif (mode == 'load'):
+            self.path = path
             self.load_model()
             print('model loaded')
 
@@ -110,9 +112,12 @@ class cnn_model(object):
 
     def load_model(self):
 
+        alias = 'lv1out_'+self.name
+        filepath = os.path.join(os.path.join('..', self.path), alias)
+
         # load model from JSON file
-        with open('{}_architecture.json'.format(self.name), 'r') as f:
+        with open(filepath+'_architecture.json', 'r') as f:
             self.model = model_from_json(f.read())
 
         # load weights into model
-        self.model.load_weights('{}_weights.h5'.format(self.name))
+        self.model.load_weights(filepath+'_weights.h5' .format(self.name))

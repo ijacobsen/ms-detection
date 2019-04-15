@@ -21,7 +21,7 @@ ex = dh.patcher(mode='testing', patch_size=(11, 11, 11))
 ex.patchify(path_table=df, patient=patient)
 patches = ex.patches_xyz
 
- #%%
+ #%% IDK... I DIDNT DO THIS YET
 # stack example patches to feed into NN
 x_train = [ptch.array for ptch in patches]
 xtrain = np.ndarray((len(x_train),
@@ -31,7 +31,8 @@ xtrain = np.ndarray((len(x_train),
                      num_channels))
 
 #%% load network
-
+mdl_dir = 'trained_models_layer1'
+model = ml.cnn_model(mode='load', name=patient, path=mdl_dir)
 
 #%% evaluate patient
 # for each pixel, create a patch and feed into network
