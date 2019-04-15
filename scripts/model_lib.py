@@ -39,8 +39,6 @@ class cnn_model(object):
 
     def build_graph(self):
 
-        ''' this is where the architecture is defined in the paper '''
-
         print('defining model')
 
         # input layer

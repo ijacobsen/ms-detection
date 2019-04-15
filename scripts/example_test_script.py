@@ -17,13 +17,10 @@ print('data loaded')
 patient = dir_list[0]
 
 # load patients data
-
-# get patches
 ex = dh.patcher(mode='testing', patch_size=(11, 11, 11))
 ex.patchify(path_table=df, patient=patient)
 patches = ex.patches_xyz
 
-# TODO SHUFFLE PATCHES
  #%%
 # stack example patches to feed into NN
 x_train = [ptch.array for ptch in patches]

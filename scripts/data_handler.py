@@ -319,7 +319,7 @@ class patcher(object):
             # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
             mask_coords = tuple(zip(*(np.nonzero(self.mask))))
 
-            print('fetching {} patches'.format(len))
+            print('fetching {} patches'.format(len(mask_coords)))
 
             # get patches... based on mask_coords
             patches = self.get_patches(img=self.flair, 
