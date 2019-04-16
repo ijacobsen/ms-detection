@@ -1,4 +1,7 @@
 '''
+this is an outdated script... it was written before i wrote the model_lib
+module... it can be moved to 'old'
+
 this is a sloppy script which was put together quickly on 3/28/19
 
 it will be rewritten

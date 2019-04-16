@@ -1,4 +1,8 @@
 '''
+this script is redundant... its the same as layer1_test_script.py
+
+it can be moved to scratch
+
 this script will train 15 CNNs, using leave one out
 '''
 
