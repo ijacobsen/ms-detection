@@ -40,7 +40,7 @@ mdl_dir = 'trained_models_layer1'
 model = ml.cnn_model(mode='load', name=patient, path=mdl_dir)
 
 
-batch_sz = 2
+batch_sz = 200
 form = np.ndarray((batch_sz, 
                    patches[0].array.shape[0],
                    patches[0].array.shape[1],
@@ -49,7 +49,10 @@ form = np.ndarray((batch_sz,
 form[0, :, :, :, 0] = patches[0].array
 form[1, :, :, :, 0] = patches[1].array
 
-prediction = model.model.predict(form, batch_size=2)
+for i in np.arange(batch_sz):
+    form[i, :, :, :, 0] = patches[i].array
+
+prediction = model.model.predict(form, batch_size=batch_sz)
 
 print('the prediction is {}'.format(prediction))
 

@@ -177,8 +177,9 @@ class patcher(object):
     def get_patches(self, img, coords, num_patches='test'):
 
         if (num_patches == 'test'):
-            num_patches = 10
-            # TODO switch back num_patches = len(coords)
+            #num_patches = 10
+            # TODO switch back 
+            num_patches = len(coords)
 
         img_shape = img.shape
 
