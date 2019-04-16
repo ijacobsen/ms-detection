@@ -1,6 +1,7 @@
 import model_lib as ml
 import data_handler as dh
 import os
+import numpy as np
 
 #%% load data
 
@@ -14,7 +15,7 @@ df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
 # choose patient
-patient = dir_list[0]
+patient = dir_list[3]
 
 # load patients data
 ex = dh.patcher(mode='testing', patch_size=(11, 11, 11))
@@ -39,14 +40,18 @@ mdl_dir = 'trained_models_layer1'
 model = ml.cnn_model(mode='load', name=patient, path=mdl_dir)
 
 
-batch_sz = 1
+batch_sz = 2
 form = np.ndarray((batch_sz, 
                    patches[0].array.shape[0],
                    patches[0].array.shape[1],
                    patches[0].array.shape[2],
                    1))
 form[0, :, :, :, 0] = patches[0].array
-prediction = model.model.predict(form)
+form[1, :, :, :, 0] = patches[1].array
+
+prediction = model.model.predict(form, batch_size=2)
+
+print('the prediction is {}'.format(prediction))
 
 #%% evaluate patient
 # for each pixel, create a patch and feed into network
