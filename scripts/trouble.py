@@ -64,7 +64,7 @@ model = ml.cnn_model(name=model_name, mode='train')
 
 # train model
 model.train_network(xtrain=xtrain_all, ytrain=ytrain_all, 
-                    batch_size=8, epochs=100)
+                    batch_size=16, epochs=100)
     
 # load model
 # model = ml.cnn_model(name=model_name, mode='load')
