@@ -1,0 +1,7 @@
+to add the libraries to the search path
+
+source activate py2_ms
+cd ~/Projects/MS/ms_libs
+conda develop .
+
+
