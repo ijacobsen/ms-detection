@@ -12,13 +12,9 @@
 
 module purge
 
-module load python/intel/2.7.12
-module load pandas/intel/py2.7/0.20.3 
-module load scikit-learn/intel/0.18.1
-module load numpy/python2.7/intel/1.14.0
-
-source ~/ms_det/py2_ms/bin/activate
+source activate py2
 
 cd ~/ms_det/scripts/
-python ~/ms_det/scripts/test_script.py
+python ~/ms_det/scripts/trouble.py
+
 
