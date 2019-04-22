@@ -40,7 +40,7 @@ mdl_dir = 'trained_models_layer1'
 model = ml.cnn_model(mode='load', name=patient, path=mdl_dir)
 
 
-batch_sz = 200
+batch_sz = 2000
 form = np.ndarray((batch_sz, 
                    patches[0].array.shape[0],
                    patches[0].array.shape[1],
@@ -55,6 +55,10 @@ for i in np.arange(batch_sz):
 prediction = model.model.predict(form, batch_size=batch_sz)
 
 print('the prediction is {}'.format(prediction))
+
+print('prediction shape is {}'.format(prediction.shape))
+
+print('{} positive examples'.format(prediction[:,0].sum()))
 
 #%% evaluate patient
 # for each pixel, create a patch and feed into network
