@@ -1,3 +1,25 @@
+'''
+1.) code pipeline to choose examples for second network
+
+2.) save second network to file
+
+3.) write functions to evaluate performance metrics used in paper (eg dice 
+score, etc)
+
+4.) write test script which takes all patches of an image and feeds through 
+first network. If first network classifies as non-lesion, classify it as 0. 
+else, run patch through second network to get final decision
+
+
+- all positive examples, same number of negative examples for network 1
+
+- form a new training set which uses all positive examples that were used in 
+network 1, as well as the same number of examples which were misclassified 
+(i.e. produced a false positive) when tested on network 1 … must resample 
+from universe
+
+'''
+
 import model_lib as ml
 import data_handler as dh
 import os
