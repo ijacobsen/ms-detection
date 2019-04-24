@@ -148,9 +148,8 @@ class patch(object):
 
 class patcher(object):
 
-    def __init__(self, mode='training', patch_size=(11, 11, 11)):
+    def __init__(self, patch_size=(11, 11, 11)):
 
-        self.mode = mode
         self.patch_size = patch_size  # (x, y, slice)
         self.consensus = 0
         self.flair = 0
@@ -177,7 +176,7 @@ class patcher(object):
     def get_patches(self, img, coords, num_patches='test'):
 
         if (num_patches == 'test'):
-            num_patches = 2000
+            num_patches = 40000
             # TODO switch back 
             #num_patches = len(coords)
 
@@ -216,7 +215,7 @@ class patcher(object):
         return patch_list
 
     def patchify(self, path_table, patient, num_patches=300,
-                 modals=False):
+                 modals=False, mode='modeless'):
 
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
 
@@ -238,7 +237,7 @@ class patcher(object):
             print('we only support accessing FLAIR right now !')
 
         # if training, filter out similar pixels
-        if (self.mode == 'training'):
+        if (mode == 'layer1_train'):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
@@ -258,35 +257,42 @@ class patcher(object):
              np.abs(np.array(coord) - np.array(pos_used)) > np.array(min_dist)).all())]
 
             # get patches
-            pos_patches = self.get_patches(img=self.flair, num_patches=num_patches,
+            pos_patches = self.get_patches(img=self.flair, num_patches=len(pos_used),
                                            coords=pos_used)
 
             # assigned labels to patches
             for ptch in pos_patches:
                 ptch.label = '1'
+            num_pos_returned = len(pos_patches)
 
             # locate negative patches
             contenders_idx = np.random.randint(0, len(valid_coords),
-                                               2*num_patches)
+                                               2*num_pos_returned)
             contenders = [valid_coords[idx] for idx in contenders_idx]
             neg_used = [i for i in contenders if i not in pos_used]
 
             # get negative patches and assign labels
-            neg_patches = self.get_patches(img=self.flair, num_patches=num_patches,
+            neg_patches = self.get_patches(img=self.flair, num_patches=num_pos_returned,
                                            coords=neg_used)
             for ptch in neg_patches:
                 ptch.label = '0'
+            num_neg_returned = len(neg_patches)
 
+            '''
             if (len(pos_patches) > num_patches/2):
                 patches_to_return = pos_patches[:num_patches/2] + neg_patches
                 num_pos_returned = num_patches/2
             else:
                 patches_to_return = pos_patches + neg_patches
                 num_pos_returned = len(pos_patches)
-            print('returning {} positive patches, {} negative patches'.format(num_pos_returned,
-                  num_patches-num_pos_returned))
+            '''
+            patches_to_return = pos_patches + neg_patches
 
-            patches = patches_to_return[:num_patches]
+            print('returning {} positive patches, {} negative patches'.format(num_pos_returned,
+                  num_neg_returned))
+
+            #patches = patches_to_return[:num_patches]
+            patches = patches_to_return[:]
             self.patches = patches
             
             # reshape patches to meet (x, y, z) criteria
@@ -305,7 +311,7 @@ class patcher(object):
 
             return 0
 
-        elif (self.mode == 'testing'):
+        elif (mode == 'testing'):
 
             print('preparing test image')
 

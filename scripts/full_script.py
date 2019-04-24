@@ -1,11 +1,31 @@
 '''
 this script will train 15 CNNs, using leave one out
+
+1.) code pipeline to choose examples for second network
+
+2.) save second network to file
+
+3.) write functions to evaluate performance metrics used in paper (eg dice 
+score, etc)
+
+4.) write test script which takes all patches of an image and feeds through 
+first network. If first network classifies as non-lesion, classify it as 0. 
+else, run patch through second network to get final decision
+
+
+- all positive examples, same number of negative examples for network 1
+
+- form a new training set which uses all positive examples that were used in 
+network 1, as well as the same number of examples which were misclassified 
+(i.e. produced a false positive) when tested on network 1 ... must resample 
+from universe
+
 '''
 
 import keras
-import numpy as np
 import model_lib as ml
 import data_handler as dh
+import numpy as np
 import os
 
 # %%    CONFIGURATION
@@ -24,20 +44,22 @@ print('data loaded')
 # choose a patient
 patient_list = df.index
 
-# %%    LAYER 1 TRAINING
+# %%    CNN training
 for k in range(len(patient_list)):
 
     pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != k]
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 1 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     first_iteration = True
     for patient in pats_lv1out:
     
         # get patches
         ex = dh.patcher(patch_size=patch_size)
-        ex.patchify(path_table=df, patient=patient)
+        ex.patchify(path_table=df, patient=patient, mode='layer1_train')
         patches = ex.patches_xyz
-    
-        # TODO SHUFFLE PATCHES
     
         # stack example patches to feed into NN
         x_train = [ptch.array for ptch in patches]
@@ -48,20 +70,20 @@ for k in range(len(patient_list)):
                              num_channels))
         ytrain = [int(ptch.label) for ptch in patches]
     
-        # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded in
-        # to account for only 1 channel (modality) being used... fix this!
+        # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded
+        # in to account for only 1 channel (modality) being used... fix this!
         # fill xdata with patch data
         for i in range(len(xtrain)):
             xtrain[i, :, :, :, 0] = x_train[i]
         ytrain = np.array(ytrain)
-    
+
         # convert target variable into one-hot
         y_train = keras.utils.to_categorical(ytrain, 2)
-    
+
         # before stacking, 
         # xtrain (500, 11, 11, 11, 1)
         # y_train (500, 2)
-    
+
         if first_iteration:
             xtrain_all = xtrain
             ytrain_all = y_train
@@ -70,16 +92,63 @@ for k in range(len(patient_list)):
             xtrain_all = np.concatenate((xtrain_all, xtrain), 0)
             ytrain_all = np.concatenate((ytrain_all, y_train), 0)
 
-    ### CNN STUFF
-    
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 1 training ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
+
     # initiate model
-    model_name = 'lv1out_{}'.format(patient_list[k])
+    model_name = 'lv1out_layer1{}'.format(patient_list[k])
     model = ml.cnn_model(name=model_name, mode='train')
     
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all, 
                         batch_size=16, epochs=100)
     
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    # use all positive examples for training layer 2
+    pos_examps_idx = np.where(ytrain_all[:, 1] > 0.5)[0]
+    xtrain_pos = xtrain_all[pos_examps_idx]
+    ytrain_pos = ytrain_all[pos_examps_idx]
+    
+    # find false positives from layer 1
+    
     # load model
     # model = ml.cnn_model(name=model_name, mode='load')
 
+# %%    LAYER 2 TRAINING
+'''
+- form a new training set which uses all positive examples that were used in 
+network 1, as well as the same number of examples which were misclassified 
+(i.e. produced a false positive) when tested on network 1 ... must resample 
+from universe
+'''
+
+'''
+#%% load network
+# the network tests patches in xyz format... more specifically,
+# (batch_size, x, y, z, 1), where 1 is because there is only 1 modality
+mdl_dir = 'trained_models_layer1'
+model = ml.cnn_model(mode='load', name=patient, path=mdl_dir)
+
+
+batch_sz = 200
+form = np.ndarray((batch_sz, 
+                   patches[0].array.shape[0],
+                   patches[0].array.shape[1],
+                   patches[0].array.shape[2],
+                   1))
+form[0, :, :, :, 0] = patches[0].array
+form[1, :, :, :, 0] = patches[1].array
+
+for i in np.arange(batch_sz):
+    form[i, :, :, :, 0] = patches[i].array
+
+prediction = model.model.predict(form, batch_size=batch_sz)
+
+print('the prediction is {}'.format(prediction))
+'''
