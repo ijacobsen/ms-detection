@@ -99,24 +99,25 @@ for k in range(len(patient_list)):
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_layer1{}'.format(patient_list[k])
+    model_name = 'lv1out_layer1_{}'.format(patient_list[k])
     model = ml.cnn_model(name=model_name, mode='train')
-    
+
     # train model
-    model.train_network(xtrain=xtrain_all, ytrain=ytrain_all, 
+    model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
                         batch_size=16, epochs=100)
-    
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     # use all positive examples for training layer 2
     pos_examps_idx = np.where(ytrain_all[:, 1] > 0.5)[0]
     xtrain_pos = xtrain_all[pos_examps_idx]
     ytrain_pos = ytrain_all[pos_examps_idx]
-    
+
     # find false positives from layer 1
-    
+    # TODO continue here
+    model.predict_network(xpredict=CONTINUE HERE !!!!!)
     # load model
     # model = ml.cnn_model(name=model_name, mode='load')
 

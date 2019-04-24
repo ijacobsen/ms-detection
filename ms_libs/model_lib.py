@@ -99,6 +99,14 @@ class cnn_model(object):
 
         self.save_model()
 
+    def predict_network(self, xpredict=0, batch_size=16):
+
+        print('predicting patches')
+        y_hat = self.model.predict(x=xpredict,
+                                   batch_size=batch_size)
+
+        return y_hat
+
     def save_model(self):
 
         print('saving model')
