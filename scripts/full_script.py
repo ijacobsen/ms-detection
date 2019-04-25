@@ -58,7 +58,7 @@ for k in range(len(patient_list)):
     
         # get patches
         ex = dh.patcher(patch_size=patch_size)
-        ex.patchify(path_table=df, patient=patient, mode='layer1_train')
+        ex.patchify(path_table=df, patient=patient, mode='network1_train')
         patches = ex.patches_xyz
     
         # stack example patches to feed into NN
@@ -115,7 +115,49 @@ for k in range(len(patient_list)):
     xtrain_pos = xtrain_all[pos_examps_idx]
     ytrain_pos = ytrain_all[pos_examps_idx]
 
-    # find false positives from layer 1
+    first_iteration = True
+    for patient in pats_lv1out:
+    
+        # get patches
+        ex = dh.patcher(patch_size=patch_size)
+        ex.patchify(path_table=df, patient=patient, mode='network2_train')
+        patches = ex.patches_xyz
+    
+        # stack example patches to feed into NN
+        x_test = [ptch.array for ptch in patches]
+        xtest = np.ndarray((len(x_test),
+                            x_test[0].shape[0],
+                            x_test[0].shape[1],
+                            x_test[0].shape[2],
+                            num_channels))
+        ytest = [int(ptch.label) for ptch in patches]
+    
+        # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded
+        # in to account for only 1 channel (modality) being used... fix this!
+        # fill xdata with patch data
+        for i in range(len(xtest)):
+            xtest[i, :, :, :, 0] = x_test[i]
+        ytest = np.array(ytest)
+
+        # convert target variable into one-hot
+        y_test = keras.utils.to_categorical(ytest, 2)
+
+        # before stacking, 
+        # xtrain (500, 11, 11, 11, 1)
+        # y_train (500, 2)
+
+        if first_iteration:
+            xtest_all = xtest
+            ytest_all = y_test
+            first_iteration = False
+        else:
+            xtest_all = np.concatenate((xtest_all, xtest), 0)
+            ytest_all = np.concatenate((ytest_all, y_test), 0)
+
+# TODO CONTINUE HERE ~~~ JUST GOT TEST PATCHES... FEED THROUGH NETWORK 1,
+            # THEN THRESHOLD TO FIND FALSE POSITIVES, THEN STACK TO USE
+            # FOR TRAINING IN NETWORK 2 .... HAVE NOT TESTED LINE 118 AND DOWN
+
     # TODO continue here
     model.predict_network(xpredict=CONTINUE HERE !!!!!)
     # load model

@@ -237,7 +237,7 @@ class patcher(object):
             print('we only support accessing FLAIR right now !')
 
         # if training, filter out similar pixels
-        if (mode == 'layer1_train'):
+        if (mode == 'network1_train'):
 
             # load the consensus
             con = self.load_image(path=path_table.loc[patient]['Consensus'])
@@ -344,6 +344,71 @@ class patcher(object):
                 else:
                     ptch.label = '0'
 
+            check = 0
+            for ptch in patches: check = check + int(ptch.label)
+            '''
+
+            for ptch in patches:
+                if self.consensus[ptch.coords]:
+                    ptch.label = '1'
+                else:
+                    ptch.label = '0'
+
+            self.patches = patches
+
+            # reshape patches to meet (x, y, z) criteria
+            self.patches_xyz = patches
+            for i in np.arange(len(self.patches_xyz)):
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 0, 1)
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
+                
+            return 0
+
+        elif (mode == 'network2_train'):
+
+            print('preparing network 2 training patches')
+
+            # load the consensus
+            con = self.load_image(path=path_table.loc[patient]['Consensus'])
+            self.consensus = con
+            pos_coords = tuple(zip(*(np.nonzero(self.consensus))))
+
+            # i am fetching mask coordinates because all coordinates
+            # are way too many... 40 million... after downsampling, 80,000
+            # get coordinates
+            # sloppy way to get all coordinates, but it works
+            # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
+
+            # downsampling mask to get a smaller number of patches
+            eval_coords = np.array((zip(*(np.nonzero(self.mask[::2, ::8, ::8])))))
+            eval_coords = eval_coords * np.array([2, 8, 8])
+            
+            '''
+            for debugging... to verify eval_coords are in mask
+            mask_coords = np.array((zip(*(np.nonzero(self.mask)))))
+            check = 0
+            for eval_co in eval_coords:
+                if eval_co in mask_coords:
+                    check = check + 1
+            if len(eval_co) != check ... then theres a problem
+            '''
+
+            print('fetching {} patches'.format(len(eval_coords)))
+
+            # get patches... based on mask_coords
+            patches = self.get_patches(img=self.flair, 
+                                       num_patches='test',
+                                       coords=eval_coords)
+            '''
+            below block was used for troubleshooting
+            patches = ex.get_patches(img=ex.flair, 
+                                       num_patches='test',
+                                       coords=mask_coords)
+            for ptch in patches:
+                if ex.consensus[ptch.coords]:
+                    ptch.label = '1'
+                else:
+                    ptch.label = '0'
             check = 0
             for ptch in patches: check = check + int(ptch.label)
             '''
