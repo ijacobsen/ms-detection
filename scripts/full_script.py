@@ -165,13 +165,21 @@ for k in range(len(patient_list)):
     # find false positives
     false_pos_truth = y_predicted[:, 1] > 0.5
     false_pos_x = xtest_all[false_pos_truth, :, :, :, :]
-    
+
     # take correct amount of false positives
-    false_pos_x = false_pos_x[:len(xtrain_pos)]
+    false_pos_x = false_pos_x[:xtrain_pos.shape[0]]
     print('false_pos_x shape is {}'.format(false_pos_x.shape))
     print('xtrain_pos shape is {}'.format(xtrain_pos.shape))
 
     # stack false positives with true positives
+    n2_x_train = np.vstack((xtrain_pos, false_pos_x))
+
+    # prepare targets
+    y = np.vstack((np.ones((xtrain_pos.shape[0], 1)),
+                   np.zeros((false_pos_x.shape[0], 1))))
+    
+    # convert target variable into one-hot
+    n2_y_train = keras.utils.to_categorical(y, 2)
 
 
 # %%    LAYER 2 TRAINING
