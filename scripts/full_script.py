@@ -43,7 +43,7 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:2] # TODO remove this line
+#patient_list = patient_list[:2] # TODO remove this line
 
 # %%    CNN training
 for k in range(len(patient_list)):
