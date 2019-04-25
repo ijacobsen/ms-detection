@@ -43,6 +43,7 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
+patient_list = patient_list[:2] # TODO remove this line
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -104,7 +105,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=16, epochs=100)
+                        batch_size=16, epochs=10)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,9 +160,16 @@ for k in range(len(patient_list)):
             # FOR TRAINING IN NETWORK 2 .... 
 
     # TODO continue here
-    model.predict_network(xpredict=xtest_all)
-    # load model
-    # model = ml.cnn_model(name=model_name, mode='load')
+    y_predicted = model.predict_network(xpredict=xtest_all)
+    print(y_predicted)
+    np.save('dumb', y_predicted)
+    
+    # find false positives
+    
+    # take correct amount of false positives
+
+    # stack false positives with true positives
+
 
 # %%    LAYER 2 TRAINING
 '''
