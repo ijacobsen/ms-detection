@@ -105,7 +105,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=16, epochs=10)
+                        batch_size=16, epochs=100)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,6 +181,19 @@ for k in range(len(patient_list)):
     # convert target variable into one-hot
     n2_y_train = keras.utils.to_categorical(y, 2)
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 training ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
+
+    # initiate model
+    model_name = 'lv1out_layer2_{}'.format(patient_list[k])
+    model = ml.cnn_model(name=model_name, mode='train')
+
+    # train model
+    model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
+                        batch_size=16, epochs=100)
 
 # %%    LAYER 2 TRAINING
 '''
