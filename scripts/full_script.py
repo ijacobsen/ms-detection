@@ -161,12 +161,15 @@ for k in range(len(patient_list)):
 
     # TODO continue here
     y_predicted = model.predict_network(xpredict=xtest_all)
-    print(y_predicted)
-    np.save('dumb', y_predicted)
     
     # find false positives
+    false_pos_truth = y_predicted[:, 1] > 0.5
+    false_pos_x = xtest_all[false_pos_truth, :, :, :, :]
     
     # take correct amount of false positives
+    false_pos_x = false_pos_x[:len(xtrain_pos)]
+    print('false_pos_x shape is {}'.format(false_pos_x.shape))
+    print('xtrain_pos shape is {}'.format(xtrain_pos.shape))
 
     # stack false positives with true positives
 
