@@ -176,9 +176,9 @@ class patcher(object):
     def get_patches(self, img, coords, num_patches='test'):
 
         if (num_patches == 'test'):
-            num_patches = 40000
+            #num_patches = 40000
             # TODO switch back 
-            #num_patches = len(coords)
+            num_patches = len(coords)
 
         img_shape = img.shape
 
@@ -383,6 +383,12 @@ class patcher(object):
             eval_coords = np.array((zip(*(np.nonzero(self.mask[::2, ::8, ::8])))))
             eval_coords = eval_coords * np.array([2, 8, 8])
             
+            # filter out positive examples... we only want negative examples
+            neg_coords = []
+            for eval_co in eval_coords:
+                if not self.consensus[tuple(eval_co)]:
+                    neg_coords.append(tuple(eval_co))
+
             '''
             for debugging... to verify eval_coords are in mask
             mask_coords = np.array((zip(*(np.nonzero(self.mask)))))
@@ -393,12 +399,12 @@ class patcher(object):
             if len(eval_co) != check ... then theres a problem
             '''
 
-            print('fetching {} patches'.format(len(eval_coords)))
+            print('fetching {} patches'.format(len(neg_coords)))
 
             # get patches... based on mask_coords
             patches = self.get_patches(img=self.flair, 
                                        num_patches='test',
-                                       coords=eval_coords)
+                                       coords=neg_coords)
             '''
             below block was used for troubleshooting
             patches = ex.get_patches(img=ex.flair, 
@@ -413,11 +419,9 @@ class patcher(object):
             for ptch in patches: check = check + int(ptch.label)
             '''
 
+            # we only have negative examples in network2_training
             for ptch in patches:
-                if self.consensus[ptch.coords]:
-                    ptch.label = '1'
-                else:
-                    ptch.label = '0'
+                ptch.label = '0'
 
             self.patches = patches
 

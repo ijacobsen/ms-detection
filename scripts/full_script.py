@@ -154,12 +154,12 @@ for k in range(len(patient_list)):
             xtest_all = np.concatenate((xtest_all, xtest), 0)
             ytest_all = np.concatenate((ytest_all, y_test), 0)
 
-# TODO CONTINUE HERE ~~~ JUST GOT TEST PATCHES... FEED THROUGH NETWORK 1,
+            # ~~~ JUST GOT TEST PATCHES... FEED THROUGH NETWORK 1,
             # THEN THRESHOLD TO FIND FALSE POSITIVES, THEN STACK TO USE
-            # FOR TRAINING IN NETWORK 2 .... HAVE NOT TESTED LINE 118 AND DOWN
+            # FOR TRAINING IN NETWORK 2 .... 
 
     # TODO continue here
-    model.predict_network(xpredict=CONTINUE HERE !!!!!)
+    model.predict_network(xpredict=xtest_all)
     # load model
     # model = ml.cnn_model(name=model_name, mode='load')
 
