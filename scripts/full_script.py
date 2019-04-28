@@ -25,6 +25,7 @@ from universe
 import keras
 import model_lib as ml
 import data_handler as dh
+import logger_lib as ll
 import numpy as np
 import os
 
@@ -41,9 +42,11 @@ print('loading data')
 df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
+logger = ll(filename='log', message='first write')
+
 # choose a patient
 patient_list = df.index
-#patient_list = patient_list[:2] # TODO remove this line
+patient_list = patient_list[:2] # TODO remove this line
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -106,6 +109,10 @@ for k in range(len(patient_list)):
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
                         batch_size=16, epochs=2)
+    
+    logger.update_logger(history.history.keys())
+    logger.update_logger(history.history['acc'])
+    logger.update_logger(history.history['val_acc'])
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

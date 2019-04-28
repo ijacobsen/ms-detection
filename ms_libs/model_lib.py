@@ -95,7 +95,8 @@ class cnn_model(object):
                        y=ytrain,
                        batch_size=batch_size,
                        epochs=epochs,
-                       validation_split=val)
+                       validation_split=val,
+                       verbose=0)
 
         self.save_model()
 
