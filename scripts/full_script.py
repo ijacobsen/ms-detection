@@ -205,7 +205,6 @@ for k in range(len(patient_list)):
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
                         batch_size=8, epochs=500)
 
-
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
     log_help.update_logger('lv1out_network2_{}'.format(patient_list[k])) 

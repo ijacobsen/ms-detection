@@ -167,17 +167,17 @@ class patcher(object):
             return False
 
         if (normalize):
-            img = (2**8 - 1)*(img - img.min())/(img.max() - img.min())
+            img = (img - img.mean()) / img.var()
+            #img = (2**8 - 1)*(img - img.min())/(img.max() - img.min())
         if (not highres):
-            return img.astype(np.uint8)  # nii files don't have negative values
+            #return img.astype(np.uint8)  # nii files don't have negative values
+            return img
         else:
             return img
 
     def get_patches(self, img, coords, num_patches='test'):
 
         if (num_patches == 'test'):
-            #num_patches = 40000
-            # TODO switch back 
             num_patches = len(coords)
 
         img_shape = img.shape
