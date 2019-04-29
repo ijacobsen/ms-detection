@@ -108,7 +108,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=16, epochs=100)
+                        batch_size=8, epochs=40)
    
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
@@ -203,7 +203,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
-                        batch_size=16, epochs=100)
+                        batch_size=8, epochs=40)
 
 
     log_help.update_logger('===========================================')
