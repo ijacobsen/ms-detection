@@ -96,8 +96,7 @@ class cnn_model(object):
                        y=ytrain,
                        batch_size=batch_size,
                        epochs=epochs,
-                       validation_split=val,
-                       verbose=0)
+                       validation_split=val)
 
 	self.history = self.model.history.history
 	#print(self.history)
