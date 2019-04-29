@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=2
-#SBATCH --gres=gpu:2
-#SBATCH --time=9:00:00
+#SBATCH --cpus-per-task=3
+#SBATCH --gres=gpu:3
+#SBATCH --time=3:00:00
 #SBATCH --mem=32GB
 #SBATCH --job-name=network_training
 #SBATCH --mail-type=END
