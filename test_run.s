@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:8
-#SBATCH --time=40:00:00
-#SBATCH --mem=32GB
+#SBATCH --cpus-per-task=1
+#SBATCH --gres=gpu:1
+#SBATCH --time=01:00:00
+#SBATCH --mem=8GB
 #SBATCH --job-name=network_training
 #SBATCH --mail-type=END
 #SBATCH --mail-user=ij405@nyu.edu

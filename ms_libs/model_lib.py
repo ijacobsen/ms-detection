@@ -27,6 +27,7 @@ class cnn_model(object):
     def __init__(self, mode='train', patch_size=(11, 11, 11),
                  num_channels=1, name='mdl', path='none'):
         self.name = name
+	self.history = 0
         if (mode == 'train'):
             self.patch_size = patch_size
             self.num_channels = num_channels
@@ -97,6 +98,9 @@ class cnn_model(object):
                        epochs=epochs,
                        validation_split=val,
                        verbose=0)
+
+	self.history = self.model.history.history
+	#print(self.history)
 
         self.save_model()
 

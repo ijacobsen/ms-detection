@@ -42,11 +42,11 @@ print('loading data')
 df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
-logger = ll(filename='log', message='first write')
+log_help = ll.logger(filename='log', message='first write')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:2] # TODO remove this line
+#patient_list = patient_list[:2] # TODO remove this line
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -54,7 +54,7 @@ for k in range(len(patient_list)):
     pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != k]
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 1 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 1 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     first_iteration = True
@@ -97,25 +97,28 @@ for k in range(len(patient_list)):
             ytrain_all = np.concatenate((ytrain_all, y_train), 0)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 1 training ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~ network 1 training ~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_layer1_{}'.format(patient_list[k])
+    model_name = 'lv1out_network1_{}'.format(patient_list[k])
     model = ml.cnn_model(name=model_name, mode='train')
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=16, epochs=2)
-    
-    logger.update_logger(history.history.keys())
-    logger.update_logger(history.history['acc'])
-    logger.update_logger(history.history['val_acc'])
+                        batch_size=16, epochs=100)
+   
+    log_help.update_logger('===========================================')
+    log_help.update_logger('===========================================')
+    log_help.update_logger('lv1out_network1_{}'.format(patient_list[k])) 
+    log_help.update_logger(model.history)
+    #log_help.update_logger(model.history['acc'])
+    #log_help.update_logger(model.history['val_acc'])
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # use all positive examples for training layer 2
@@ -189,19 +192,24 @@ for k in range(len(patient_list)):
     n2_y_train = keras.utils.to_categorical(y, 2)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ layer 2 training ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 training ~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_layer2_{}'.format(patient_list[k])
+    model_name = 'lv1out_network2_{}'.format(patient_list[k])
     model = ml.cnn_model(name=model_name, mode='train')
 
     # train model
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
-                        batch_size=16, epochs=2)
+                        batch_size=16, epochs=100)
 
+
+    log_help.update_logger('===========================================')
+    log_help.update_logger('===========================================')
+    log_help.update_logger('lv1out_network2_{}'.format(patient_list[k])) 
+    log_help.update_logger(model.history)
 # %%    LAYER 2 TRAINING
 '''
 - form a new training set which uses all positive examples that were used in 

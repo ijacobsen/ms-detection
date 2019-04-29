@@ -11,4 +11,4 @@ class logger(object):
         
         with open(self.filename, 'a') as f:
             f.write('\n')
-            f.write(message)
+            f.write(str(message))

@@ -246,7 +246,7 @@ class patcher(object):
 
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
-            min_dist = (2, 6, 6)
+            min_dist = (1, 6, 6)
 
             # downsample because coords are ordered, and below code is O(n^2)
             ds_pos_coords = pos_coords[::30]
@@ -380,8 +380,8 @@ class patcher(object):
             # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
 
             # downsampling mask to get a smaller number of patches
-            eval_coords = np.array((zip(*(np.nonzero(self.mask[::2, ::8, ::8])))))
-            eval_coords = eval_coords * np.array([2, 8, 8])
+            eval_coords = np.array((zip(*(np.nonzero(self.mask[::1, ::6, ::6])))))
+            eval_coords = eval_coords * np.array([1, 6, 6])
             
             # filter out positive examples... we only want negative examples
             neg_coords = []
