@@ -65,9 +65,8 @@ class cnn_model(object):
         pooling_layer2 = MaxPool3D(pool_size=(2, 2, 2),
                                    strides=(2, 2, 2))(conv_layer2)
     
-        # ** UNSURE ABOUT THIS ... copying it from example
-        # perform batch normalization on the convolution outputs before
-        # feeding it to MLP architecture
+        # to avoid vanishing gradient
+        # perform batch normalization on the convolution outputs before MLP
         pooling_layer2 = BatchNormalization()(pooling_layer2)
 
         # flatten layer
@@ -76,8 +75,11 @@ class cnn_model(object):
         # dense layer
         dense_layer1 = Dense(units=256, activation='relu')(flatten_layer)
 
+        # dropout (added 4/30/19)
+        dropout_layer = Dropout(0.5)(dense_layer1)
+
         # output layer
-        output_layer = Dense(units=2, activation='softmax')(dense_layer1)
+        output_layer = Dense(units=2, activation='softmax')(dropout_layer)
 
         self.model = Model(inputs=input_layer, outputs=output_layer)
 
