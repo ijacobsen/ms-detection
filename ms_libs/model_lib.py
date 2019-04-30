@@ -98,8 +98,8 @@ class cnn_model(object):
                        epochs=epochs,
                        validation_split=val)
 
-	self.history = self.model.history.history
-	#print(self.history)
+        self.history = self.model.history.history
+        #print(self.history)
 
         self.save_model()
 
