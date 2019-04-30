@@ -46,7 +46,7 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:6] # TODO remove this line
+patient_list = patient_list[:4] # TODO remove this line
 
 log_help = ll.logger(filename='log_btch{}_p{}_epochs{}'.format(batch_sz, len(patient_list), epochs_hp), message='first write')
 # %%    CNN training
@@ -115,8 +115,6 @@ for k in range(len(patient_list)):
     log_help.update_logger('===========================================')
     log_help.update_logger('lv1out_network1_{}'.format(patient_list[k])) 
     log_help.update_logger(model.history)
-    #log_help.update_logger(model.history['acc'])
-    #log_help.update_logger(model.history['val_acc'])
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,7 +168,7 @@ for k in range(len(patient_list)):
             # THEN THRESHOLD TO FIND FALSE POSITIVES, THEN STACK TO USE
             # FOR TRAINING IN NETWORK 2 .... 
 
-    # TODO continue here
+    # make predictions
     y_predicted = model.predict_network(xpredict=xtest_all)
     
     # find false positives
@@ -182,13 +180,18 @@ for k in range(len(patient_list)):
     print('false_pos_x shape is {}'.format(false_pos_x.shape))
     print('xtrain_pos shape is {}'.format(xtrain_pos.shape))
 
-    # stack false positives with true positives
-    n2_x_train = np.vstack((xtrain_pos, false_pos_x))
+    # take even split of training examples and stack
+    if (false_pos_x.shape[0] > xtrain_pos.shape[0]):
+        n2_x_train = np.vstack((xtrain_pos, false_pos_x[:xtrain_pos.shape[0], :, :, :, :]))
+        y = np.vstack((np.ones((xtrain_pos.shape[0], 1)),
+                       np.zeros((false_pos_x[:xtrain_pos.shape, :, :, :, :].shape[0], 1))))
+    else:
+        n2_x_train = np.vstack((xtrain_pos[:false_pos_x.shape[0], :, :, :, :], false_pos_x))
+        y = np.vstack((np.ones((xtrain_pos[:false_pos_x.shape[0], :, :, :, :].shape[0], 1)),
+                       np.zeros((false_pos_x.shape[0], 1))))
 
-    # prepare targets
-    y = np.vstack((np.ones((xtrain_pos.shape[0], 1)),
-                   np.zeros((false_pos_x.shape[0], 1))))
-    
+    print('training network 2 on {} patches'.format(y.shape[0]))   
+ 
     # convert target variable into one-hot
     n2_y_train = keras.utils.to_categorical(y, 2)
 
