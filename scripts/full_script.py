@@ -32,8 +32,9 @@ import os
 # %%    CONFIGURATION
 patch_size = (11, 11, 11)
 num_channels = 1
-batch_sz = 4
+batch_sz = 32
 epochs_hp = 300
+num_pats = 3
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -46,9 +47,10 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:4] # TODO remove this line
+patient_list = patient_list[:num_pats] # TODO remove this line
 
 log_help = ll.logger(filename='log_btch{}_p{}_epochs{}'.format(batch_sz, len(patient_list), epochs_hp), message='first write')
+
 # %%    CNN training
 for k in range(len(patient_list)):
 
