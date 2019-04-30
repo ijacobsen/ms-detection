@@ -33,6 +33,7 @@ import os
 patch_size = (11, 11, 11)
 num_channels = 1
 batch_sz = 4
+epochs_hp = 300
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -45,9 +46,9 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:3] # TODO remove this line
+patient_list = patient_list[:6] # TODO remove this line
 
-log_help = ll.logger(filename='log_btch{}_p{}'.format(batch_sz, len(patient_list)), message='first write')
+log_help = ll.logger(filename='log_btch{}_p{}_epochs{}'.format(batch_sz, len(patient_list), epochs_hp), message='first write')
 # %%    CNN training
 for k in range(len(patient_list)):
 
@@ -108,7 +109,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=batch_sz, epochs=250)
+                        batch_size=batch_sz, epochs=epochs_hp)
    
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
@@ -203,7 +204,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
-                        batch_size=batch_sz, epochs=250)
+                        batch_size=batch_sz, epochs=epochs_hp)
 
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
