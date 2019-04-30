@@ -32,6 +32,7 @@ import os
 # %%    CONFIGURATION
 patch_size = (11, 11, 11)
 num_channels = 1
+batch_sz = 4
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -42,12 +43,11 @@ print('loading data')
 df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
-log_help = ll.logger(filename='log', message='first write')
-
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:2] # TODO remove this line
+patient_list = patient_list[:3] # TODO remove this line
 
+log_help = ll.logger(filename='log_btch{}_p{}'.format(batch_sz, len(patient_list)), message='first write')
 # %%    CNN training
 for k in range(len(patient_list)):
 
@@ -108,7 +108,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=8, epochs=500)
+                        batch_size=batch_sz, epochs=250)
    
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
@@ -203,7 +203,7 @@ for k in range(len(patient_list)):
 
     # train model
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
-                        batch_size=8, epochs=500)
+                        batch_size=batch_sz, epochs=250)
 
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
