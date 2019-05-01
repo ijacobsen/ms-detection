@@ -8,13 +8,14 @@ from matplotlib.patches import Circle
 
 def show_patch(ptch, con_ptch=False, animate=False):
 
-    if con_ptch:
+    if (type(con_ptch) == np.ndarray):
         # show_patch(patches[12], con_patches[12])
+        print('plotting consensus and flair patch')
         center = ptch.array.shape[0]/2
         plt.subplot(1, 2, 1)
         plt.imshow(ptch.array[center, :, :], cmap='gray')
         plt.subplot(1, 2, 2)
-        plt.imshow(con_ptch.array[center, :, :], cmap='gray')
+        plt.imshow(con_ptch[center, :, :], cmap='gray')
 
 
     elif not animate:
@@ -220,7 +221,8 @@ class patcher(object):
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
 
         # use the mask to filter out black space
-        mask = self.load_image(path=path_table.loc[patient]['Mask'])
+        mask = self.load_image(path=path_table.loc[patient]['Mask'],
+                               normalize=False)
         self.mask = mask
 
         # coordinates where the brain is present
