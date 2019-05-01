@@ -39,6 +39,10 @@ class cnn_model(object):
             self.path = path
             self.load_model()
             print('model loaded')
+        elif (mode == 'classify'):
+            self.path = path
+            self.load_model()
+            self.classify_3d_scan()
 
     def build_graph(self):
 
@@ -112,6 +116,14 @@ class cnn_model(object):
                                    batch_size=batch_size)
 
         return y_hat
+
+    def classify_3d_scan(self, patient=0):
+
+        # we need two models to be loaded for this
+        # for each slide, pass all patches through first network
+        # for each patch that the first network predicted as positive, pass through
+        # the second networ
+        #TODO continue here
 
     def save_model(self):
 
