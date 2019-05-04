@@ -56,6 +56,10 @@ for k in range(len(patient_list)):
 
     pats_lv1out = [patient_list[j] for j in range(len(patient_list)) if j != k]
 
+    log_help.update_meta('=========================================')
+    log_help.update_meta('=========================================')
+    log_help.update_meta('~~~ training network 1 {} ~~~'.format(patient_list[k]))
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 1 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,6 +103,8 @@ for k in range(len(patient_list)):
             xtrain_all = np.concatenate((xtrain_all, xtrain), 0)
             ytrain_all = np.concatenate((ytrain_all, y_train), 0)
 
+    log_help.udpate_meta('training on {} positive examples, {} negative examples'.format(np.sum(ytrain_all[:, 1]), np.sum(ytrain_all[:, 0])))
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~ network 1 training ~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,6 +127,8 @@ for k in range(len(patient_list)):
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    log_help.update_meta('~~~ training network 2 {} ~~~'.format(patient_list[k]))
 
     # use all positive examples for training layer 2
     pos_examps_idx = np.where(ytrain_all[:, 1] > 0.5)[0]
@@ -193,7 +201,10 @@ for k in range(len(patient_list)):
                        np.zeros((false_pos_x.shape[0], 1))))
 
     print('training network 2 on {} patches'.format(y.shape[0]))   
- 
+
+
+    log_help.udpate_meta('training on {} positive examples, {} negative examples'.format(np.sum(y[:, 1]), np.sum(y[:, 0])))
+
     # convert target variable into one-hot
     n2_y_train = keras.utils.to_categorical(y, 2)
 
