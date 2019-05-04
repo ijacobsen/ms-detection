@@ -15,7 +15,7 @@ class logger(object):
         
         with open(self.filename, 'a') as f:
             f.write('\n')
-            f.write(str(message))i
+            f.write(str(message))
 
     def update_meta(self, message):
 

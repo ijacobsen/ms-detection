@@ -32,8 +32,8 @@ import os
 # %%    CONFIGURATION
 patch_size = (11, 11, 11)
 num_channels = 1
-batch_sz = 32
-epochs_hp = 300
+batch_sz = 8
+epochs_hp = 10
 num_pats = 3
 
 # get list of available directories
@@ -103,7 +103,7 @@ for k in range(len(patient_list)):
             xtrain_all = np.concatenate((xtrain_all, xtrain), 0)
             ytrain_all = np.concatenate((ytrain_all, y_train), 0)
 
-    log_help.udpate_meta('training on {} positive examples, {} negative examples'.format(np.sum(ytrain_all[:, 1]), np.sum(ytrain_all[:, 0])))
+    log_help.update_meta('training on {} positive examples, {} negative examples'.format(np.sum(ytrain_all[:, 1]), np.sum(ytrain_all[:, 0])))
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~ network 1 training ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -202,11 +202,10 @@ for k in range(len(patient_list)):
 
     print('training network 2 on {} patches'.format(y.shape[0]))   
 
-
-    log_help.udpate_meta('training on {} positive examples, {} negative examples'.format(np.sum(y[:, 1]), np.sum(y[:, 0])))
-
     # convert target variable into one-hot
     n2_y_train = keras.utils.to_categorical(y, 2)
+
+    log_help.update_meta('training on {} positive examples, {} negative examples'.format(np.sum(n2_y_train[:, 1]), np.sum(n2_y_train[:, 0])))
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 training ~~~~~~~~~~~~~~~~~~~~~~~~~~

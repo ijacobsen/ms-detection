@@ -117,7 +117,7 @@ class cnn_model(object):
 
         return y_hat
 
-    def classify_3d_scan(self, patient=0):
+#    def classify_3d_scan(self, patient=0):
 
         # we need two models to be loaded for this
         # for each slide, pass all patches through first network
