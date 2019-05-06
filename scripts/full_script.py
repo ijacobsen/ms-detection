@@ -82,7 +82,7 @@ for k in range(len(patient_list)):
         ytrain = [int(ptch.label) for ptch in patches]
     
         # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded
-        # in to account for only 1 channel (modality) being used... fix this!
+        # in to account for only 1 channel (modality) being used
         # fill xdata with patch data
         for i in range(len(xtrain)):
             xtrain[i, :, :, :, 0] = x_train[i]
@@ -153,7 +153,7 @@ for k in range(len(patient_list)):
         ytest = [int(ptch.label) for ptch in patches]
     
         # TODO this is very sloppy... xtrain[i, :, :, :, 0] ... 0 is hardcoded
-        # in to account for only 1 channel (modality) being used... fix this!
+        # in to account for only 1 channel (modality) being used
         # fill xdata with patch data
         for i in range(len(xtest)):
             xtest[i, :, :, :, 0] = x_test[i]

@@ -3,6 +3,7 @@ import numpy as np
 import nibabel as nib
 from matplotlib import pyplot as plt
 import pandas as pd
+from random import shuffle
 from matplotlib.patches import Circle
 
 
@@ -230,6 +231,7 @@ class patcher(object):
 
         if (not modals):
 
+            # load FLAIR image
             flair = self.load_image(path=path_table.loc[patient]['FLAIR_preprocessed'], 
                                     normalize=True)
             self.flair = flair
@@ -248,17 +250,20 @@ class patcher(object):
 
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
-            min_dist = (1, 6, 6)
+            min_dist = (1, 4, 4)
 
             # downsample because coords are ordered, and below code is O(n^2)
-            ds_pos_coords = pos_coords[::30]
+            ds_pos_coords = pos_coords[::20]
 
             # finds good candidates... slow O(n^2) in ds_pos_coords
             pos_used = [pos_coords[0], pos_coords[-1]]
             [pos_used.append(coord) for coord in ds_pos_coords if (np.apply_along_axis(np.any, 1, 
              np.abs(np.array(coord) - np.array(pos_used)) > np.array(min_dist)).all())]
+            
+            # shuffle coordinates
+            shuffle(pos_used)
 
-            # get patches
+            # get positive patches
             pos_patches = self.get_patches(img=self.flair, num_patches=len(pos_used),
                                            coords=pos_used)
 
@@ -269,9 +274,12 @@ class patcher(object):
 
             # locate negative patches
             contenders_idx = np.random.randint(0, len(valid_coords),
-                                               2*num_pos_returned)
+                                               3*num_pos_returned)
             contenders = [valid_coords[idx] for idx in contenders_idx]
             neg_used = [i for i in contenders if i not in pos_used]
+            
+            # shuffle coordinates
+            shuffle(neg_used)
 
             # get negative patches and assign labels
             neg_patches = self.get_patches(img=self.flair, num_patches=num_pos_returned,
@@ -382,14 +390,22 @@ class patcher(object):
             # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
 
             # downsampling mask to get a smaller number of patches
-            eval_coords = np.array((zip(*(np.nonzero(self.mask[::1, ::6, ::6])))))
-            eval_coords = eval_coords * np.array([1, 6, 6])
-            
+            ds_factor = [1, 4, 4]
+            eval_coords = np.array((zip(*(np.nonzero(self.mask[::ds_factor[0],
+                                                               ::ds_factor[1],
+                                                               ::ds_factor[2]])))))
+            eval_coords = eval_coords * np.array([ds_factor[0],
+                                                  ds_factor[1],
+                                                  ds_factor[2]])
+
             # filter out positive examples... we only want negative examples
             neg_coords = []
             for eval_co in eval_coords:
                 if not self.consensus[tuple(eval_co)]:
                     neg_coords.append(tuple(eval_co))
+
+            # shuffle negative examples
+            shuffle(neg_coords)
 
             '''
             for debugging... to verify eval_coords are in mask
