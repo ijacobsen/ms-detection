@@ -32,9 +32,9 @@ import os
 # %%    CONFIGURATION
 patch_size = (11, 11, 11)
 num_channels = 1
-batch_sz = 8
-epochs_hp = 10
-num_pats = 3
+batch_sz = 16
+epochs_hp = 30
+num_pats = 5
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
