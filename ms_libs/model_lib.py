@@ -27,7 +27,8 @@ class cnn_model(object):
     def __init__(self, mode='train', patch_size=(11, 11, 11),
                  num_channels=1, name='mdl', path='none'):
         self.name = name
-	self.history = 0
+        self.history = 0
+
         if (mode == 'train'):
             self.patch_size = patch_size
             self.num_channels = num_channels
@@ -117,14 +118,6 @@ class cnn_model(object):
 
         return y_hat
 
-#    def classify_3d_scan(self, patient=0):
-
-        # we need two models to be loaded for this
-        # for each slide, pass all patches through first network
-        # for each patch that the first network predicted as positive, pass through
-        # the second networ
-        #TODO continue here
-
     def save_model(self):
 
         print('saving model')
@@ -147,3 +140,46 @@ class cnn_model(object):
 
         # load weights into model
         self.model.load_weights(filepath+'_weights.h5' .format(self.name))
+
+#%% TODO work here
+class classifier(object):
+    
+    def __init__(self, mode='classify', patch_size=(11, 11, 11),
+                 num_channels=1, name='mdl', path='none'):
+        self.name = name
+
+        if (mode == 'classify'):
+            self.path = path
+            self.load_model()
+            self.classify_3d_scan()
+
+
+    def load_model(self):
+
+        alias = 'lv1out_'+self.name
+        filepath = os.path.join(os.path.join('..', self.path), alias)
+
+        # load model from JSON file
+        with open(filepath+'_architecture.json', 'r') as f:
+            self.network_one = model_from_json(f.read())
+
+        # load weights into model
+        self.network_one.load_weights(filepath+'_weights.h5' .format(self.name))
+
+        # load model from JSON file
+        with open(filepath+'_architecture.json', 'r') as f:
+            self.network_two = model_from_json(f.read())
+
+        # load weights into model
+        self.network_two.load_weights(filepath+'_weights.h5' .format(self.name))
+
+
+    def classify_3d_scan(self, patient_to_classify=0, model_to_use=0):
+
+        # we need two models to be loaded for this
+        # for each slide, pass all patches through first network
+        # for each patch that the first network predicted as positive, pass through
+        # the second networ
+        #TODO continue here
+        
+        # prepare data 

@@ -4,8 +4,8 @@ import yaml
 from matplotlib import pyplot as plt
 
 dir_name = 'crossval_eval'
-btch_sz = 8
-p = 3
+btch_sz = 32
+p = 5
 epoch_sz = 300
 #file_name = 'log_btch{}_epochs{}'.format(btch_sz, epoch_sz)
 file_name = 'log_btch{}_p{}_epochs{}'.format(btch_sz, p, epoch_sz)
@@ -32,7 +32,6 @@ for line in lines:
 patient_list = network1_df.columns
 patient = patient_list[0]
 pat_len = len(patient_list) - 1
-pat_len = 2
 #%%
 #~~~~~~~~~~~~~~~~~~~ PLOT VALIDATION ACCURACY ~~~~~~~~~~~~~~~~~~~
 plt.plot(network1_df[patient]['val_acc'])
