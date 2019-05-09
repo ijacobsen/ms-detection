@@ -6,6 +6,7 @@ from keras.losses import categorical_crossentropy
 from keras.optimizers import Adadelta
 from keras.models import Model, model_from_json
 import keras
+import data_handler as dh
 
 '''
 
@@ -145,14 +146,15 @@ class cnn_model(object):
 class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
-                 num_channels=1, name='none', path='none'):
+                 num_channels=1, name='none', path='none', data='none'):
 
         self.name = name # patient that was left out
 
         if (mode == 'classify'):
+            self.df = data
             self.path = path
             self.load_models()
-            self.classify_3d_scan()
+            print('classifier ready')
 
     def load_models(self):
 
@@ -180,18 +182,63 @@ class classifier(object):
 
         print('networks loaded')
 
+    def classify_network1(self, xdata=0, batch_size=16):
+        
+        print('classifying patches through network 1')
+        
+        y_hat = self.network1.predict(x=xdata,
+                                      batch_size=batch_size)
+        
+        return y_hat
+    
+    def classify_network2(self, xdata=0, batch_size=16):
+        
+        print('classifying patches through network 2')
+        
+        y_hat = self.network2.predict(x=xdata,
+                                      batch_size=batch_size)
+        
+        return y_hat
 
     def classify_scan(self, patient=0):
 
         # we need two models to be loaded for this
         # for each slide, pass all patches through first network
         # for each patch that the first network predicted as positive, pass through
-        # the second networ
-        #TODO continue here
+        # the second network
         
-        # prepare data 
-        
-        # for each slice, classify every pixel in the mask
+        # prepare data
+        self.ex = dh.patcher(patch_size=self.patch_size)
+        slices = self.ex.patchify(path_table=self.df, patient=patient,
+                                  mode='classify')
+
+        network1_segmentation = []
+        for sl in slices:
+            
+            # get patches
+            self.ex.patchify(path_table=self.df, patient=patient, mode='classify')
+            self.patches = self.ex.patches_xyz
+            
+            # stack example patches to feed into NN
+            xdata = [ptch.array for ptch in self.patches]
+            xdata = np.ndarray((len(xdata),
+                                xdata[0].shape[0],
+                                xdata[0].shape[1],
+                                xdata[0].shape[2],
+                                1)) # only one channel
+            # fill xdata with patch data
+            for i in range(len(xdata)):
+                xdata[i, :, :, :, 0] = xdata[i]
+
+            # predict patches
+            y_hat = self.classify_network1(xdata=xdata)
+            
+            for i in len(self.patches):
+                if y_hat[i, 1] > 0.5:
+                    self.patches[i].label = '1'
+                else:
+                    self.patches[i].label = '0'
+
         
         #TODO continue here... just finished data_handler for getting pixels
 
@@ -206,10 +253,10 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-
 patient = patient_list[0]
 
 mdl_dir = 'trained_models'
-classifier = ml.classifier(mode='classify', name=patient, path=mdl_dir)
+classifier = ml.classifier(mode='classify', name=patient,
+                           path=mdl_dir, data=df)
 
 segmented_mri = classifier.classify_scan(patient=patient)

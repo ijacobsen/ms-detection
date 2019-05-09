@@ -160,6 +160,7 @@ class patcher(object):
         self.patches_xyz = 0
         self.consensus_patches = 0
         self.classify_iter_number = 0
+        self.classify_meta_data_prep = True
 
     def load_image(self, path=False, highres=False, normalize=False):
 
@@ -402,10 +403,10 @@ class patcher(object):
         elif (mode == 'classify'):
             
             # if its the first iteration, do some prep
-            if (self.classify_iter_number == 0):
+            if (self.classify_meta_data_prep == 'True'):
 
                 print('preparing image')
-    
+
                 # i am fetching mask coordinates because all coordinates
                 # are way too many... 40 million... to save memory on patches
                 # i use the mask
@@ -417,8 +418,9 @@ class patcher(object):
                 slices = [coord[0] for coord in mask_coords]
                 self.slices = list(set(slices))
                 
-                # index number
-                slice_idx = self.slices[0]
+                self.classify_meta_data_prep = False
+                
+                return self.slices
 
             else:
                 
@@ -426,7 +428,7 @@ class patcher(object):
                 slice_idx = self.slices[self.classify_iter_number]
 
 
-            print('classifying slice number {}'.format(slice_idx))
+            print('getting patches for slice number {}'.format(slice_idx))
 
             # get coordinates in current slice
             coords = tuple(zip(*(np.nonzero(self.mask[slice_idx, :, :]))))
