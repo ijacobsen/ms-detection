@@ -149,6 +149,7 @@ class classifier(object):
                  num_channels=1, name='none', path='none', data='none'):
 
         self.name = name # patient that was left out
+        self.patch_size = patch_size
 
         if (mode == 'classify'):
             self.df = data
@@ -189,19 +190,25 @@ class classifier(object):
         # reformat data to feed into keras
         xdata = self.patches_to_x_array(patches=self.patches)
         
+        # REMOVE COMMENT... for debugging
+        '''
         y_hat = self.network1.predict(x=xdata,
                                       batch_size=batch_size)
+        '''
+        y_hat = np.random.randint(0, 2, xdata.shape[0])
+        y_hat = keras.utils.to_categorical(y_hat, 2)
 
         # threshold predictions... [0, 1] is a positive example
-        for i in len(self.patches):
+        for i in np.arange(len(self.patches)):
             if y_hat[i, 1] > 0.5:
+            
                 self.patches[i].label = '1'
             else:
                 self.patches[i].label = '0'
         
         # store network 1 segmentation [x, y, z, label]
         n1_slice_seg = [ptch.coords + [ptch.label] for ptch in self.patches]
-        n1_seg.append(n1_slice_seg)
+        self.n1_seg.append(n1_slice_seg)
         
         return 0
     
@@ -217,11 +224,15 @@ class classifier(object):
         # reformat data to feed into keras
         xdata = self.patches_to_x_array(patches=patches)
         
+        '''
         y_hat = self.network2.predict(x=xdata,
                                       batch_size=batch_size)
+        '''
+        y_hat = np.random.randint(0, 2, xdata.shape[0])
+        y_hat = keras.utils.to_categorical(y_hat, 2)
 
         # threshold predictions... [0, 1] is a positive example
-        for i in len(patches):
+        for i in np.arange(len(patches)):
             if y_hat[i, 1] > 0.5:
                 patches[i].label = '1'
             else:
@@ -236,15 +247,15 @@ class classifier(object):
     def patches_to_x_array(self, patches='none'):
 
             # stack example patches to feed into NN
-            xdata = [ptch.array for ptch in patches]
-            xdata = np.ndarray((len(xdata),
-                                xdata[0].shape[0],
-                                xdata[0].shape[1],
-                                xdata[0].shape[2],
+            x_data = [ptch.array for ptch in patches]
+            xdata = np.ndarray((len(x_data),
+                                x_data[0].shape[0],
+                                x_data[0].shape[1],
+                                x_data[0].shape[2],
                                 1)) # only one channel
             # fill xdata with patch data
             for i in range(len(xdata)):
-                xdata[i, :, :, :, 0] = xdata[i]
+                xdata[i, :, :, :, 0] = x_data[i]
 
             return xdata
 

@@ -403,7 +403,7 @@ class patcher(object):
         elif (mode == 'classify'):
             
             # if its the first iteration, do some prep
-            if (self.classify_meta_data_prep == 'True'):
+            if (self.classify_meta_data_prep == True):
 
                 print('preparing image')
 
