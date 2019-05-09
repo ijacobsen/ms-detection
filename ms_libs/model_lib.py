@@ -182,45 +182,61 @@ class classifier(object):
 
         print('networks loaded')
 
-    def classify_network1(self, xdata=0, batch_size=16):
+    def classify_network1(self, batch_size=16):
         
         print('classifying patches through network 1')
+    
+        # reformat data to feed into keras
+        xdata = self.patches_to_x_array(patches=self.patches)
         
         y_hat = self.network1.predict(x=xdata,
                                       batch_size=batch_size)
+
+        # threshold predictions... [0, 1] is a positive example
+        for i in len(self.patches):
+            if y_hat[i, 1] > 0.5:
+                self.patches[i].label = '1'
+            else:
+                self.patches[i].label = '0'
         
-        return y_hat
+        # store network 1 segmentation [x, y, z, label]
+        n1_slice_seg = [ptch.coords + [ptch.label] for ptch in self.patches]
+        n1_seg.append(n1_slice_seg)
+        
+        return 0
     
-    def classify_network2(self, xdata=0, batch_size=16):
+    def classify_network2(self, batch_size=16):
         
         print('classifying patches through network 2')
         
+        # find positive patches from network1
+        patches = [ptch for ptch in self.patches if ptch.label == '1']
+        
+        #coords = [ptch[:3] for ptch in self.n1_seg if ptch[3] == '1']
+        
+        # reformat data to feed into keras
+        xdata = self.patches_to_x_array(patches=patches)
+        
         y_hat = self.network2.predict(x=xdata,
                                       batch_size=batch_size)
+
+        # threshold predictions... [0, 1] is a positive example
+        for i in len(patches):
+            if y_hat[i, 1] > 0.5:
+                patches[i].label = '1'
+            else:
+                patches[i].label = '0'
         
-        return y_hat
-
-    def classify_scan(self, patient=0):
-
-        # we need two models to be loaded for this
-        # for each slide, pass all patches through first network
-        # for each patch that the first network predicted as positive, pass through
-        # the second network
+        # store network 1 segmentation [x, y, z, label]
+        n2_slice_seg = [ptch.coords + [ptch.label] for ptch in patches]
+        self.n2_seg.append(n2_slice_seg)
         
-        # prepare data
-        self.ex = dh.patcher(patch_size=self.patch_size)
-        slices = self.ex.patchify(path_table=self.df, patient=patient,
-                                  mode='classify')
+        return 0
+    
+    def patches_to_x_array(self, patches='none'):
 
-        network1_segmentation = []
-        for sl in slices:
-            
-            # get patches
-            self.ex.patchify(path_table=self.df, patient=patient, mode='classify')
-            self.patches = self.ex.patches_xyz
-            
             # stack example patches to feed into NN
-            xdata = [ptch.array for ptch in self.patches]
+            xdata = [ptch.array for ptch in patches]
             xdata = np.ndarray((len(xdata),
                                 xdata[0].shape[0],
                                 xdata[0].shape[1],
@@ -230,33 +246,33 @@ class classifier(object):
             for i in range(len(xdata)):
                 xdata[i, :, :, :, 0] = xdata[i]
 
-            # predict patches
-            y_hat = self.classify_network1(xdata=xdata)
+            return xdata
+
+    def classify_scan(self, patient=0):
+
+        # we need two models to be loaded for this
+        # for each slide, pass all patches through first network
+        # for each patch that the first network predicted as positive, pass through
+        # the second network
+
+        # prepare data
+        self.n1_seg = []
+        self.n2_seg = []
+        self.ex = dh.patcher(patch_size=self.patch_size)
+        slices = self.ex.patchify(path_table=self.df, patient=patient,
+                                  mode='classify')
+
+        for sl in slices:
             
-            for i in len(self.patches):
-                if y_hat[i, 1] > 0.5:
-                    self.patches[i].label = '1'
-                else:
-                    self.patches[i].label = '0'
+            # get patches
+            self.ex.patchify(path_table=self.df, patient=patient, mode='classify')
+            self.patches = self.ex.patches_xyz
 
+            # predict patches in network 1
+            self.classify_network1()
+
+            # find patches that classified as positive in network1 and send to n2
+            self.classify_network2()
         
-        #TODO continue here... just finished data_handler for getting pixels
+        return [self.n1_seg, self.n2_seg]
 
-# get list of available directories
-dir_list = os.listdir('../raw_data/')
-dir_list = [di for di in dir_list if di[0] == '0']
-
-# form database
-print('loading data')
-df = dh.create_df(dir_list, modal='flair')
-print('data loaded')
-
-# choose a patient
-patient_list = df.index
-patient = patient_list[0]
-
-mdl_dir = 'trained_models'
-classifier = ml.classifier(mode='classify', name=patient,
-                           path=mdl_dir, data=df)
-
-segmented_mri = classifier.classify_scan(patient=patient)
