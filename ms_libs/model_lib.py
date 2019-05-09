@@ -145,36 +145,43 @@ class cnn_model(object):
 class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
-                 num_channels=1, name='mdl', path='none'):
-        self.name = name
+                 num_channels=1, name='none', path='none'):
+
+        self.name = name # patient that was left out
 
         if (mode == 'classify'):
             self.path = path
-            self.load_model()
+            self.load_models()
             self.classify_3d_scan()
 
+    def load_models(self):
 
-    def load_model(self):
-
-        alias = 'lv1out_'+self.name
+        print('loading network one')
+        alias = 'lv1out_network1_'+self.name
         filepath = os.path.join(os.path.join('..', self.path), alias)
 
         # load model from JSON file
         with open(filepath+'_architecture.json', 'r') as f:
-            self.network_one = model_from_json(f.read())
+            self.network1 = model_from_json(f.read())
 
         # load weights into model
-        self.network_one.load_weights(filepath+'_weights.h5' .format(self.name))
+        self.network1.load_weights(filepath+'_weights.h5' .format(self.name))
+
+        print('loading network two')
+        alias = 'lv1out_network2_'+self.name
+        filepath = os.path.join(os.path.join('..', self.path), alias)
 
         # load model from JSON file
         with open(filepath+'_architecture.json', 'r') as f:
-            self.network_two = model_from_json(f.read())
+            self.network2 = model_from_json(f.read())
 
         # load weights into model
-        self.network_two.load_weights(filepath+'_weights.h5' .format(self.name))
+        self.network2.load_weights(filepath+'_weights.h5' .format(self.name))
+
+        print('networks loaded')
 
 
-    def classify_3d_scan(self, patient_to_classify=0, model_to_use=0):
+    def classify_scan(self, patient=0):
 
         # we need two models to be loaded for this
         # for each slide, pass all patches through first network
@@ -183,3 +190,26 @@ class classifier(object):
         #TODO continue here
         
         # prepare data 
+        
+        # for each slice, classify every pixel in the mask
+        
+        #TODO continue here... just finished data_handler for getting pixels
+
+# get list of available directories
+dir_list = os.listdir('../raw_data/')
+dir_list = [di for di in dir_list if di[0] == '0']
+
+# form database
+print('loading data')
+df = dh.create_df(dir_list, modal='flair')
+print('data loaded')
+
+# choose a patient
+patient_list = df.index
+
+patient = patient_list[0]
+
+mdl_dir = 'trained_models'
+classifier = ml.classifier(mode='classify', name=patient, path=mdl_dir)
+
+segmented_mri = classifier.classify_scan(patient=patient)

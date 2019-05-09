@@ -159,6 +159,7 @@ class patcher(object):
         self.patches = 0
         self.patches_xyz = 0
         self.consensus_patches = 0
+        self.classify_iter_number = 0
 
     def load_image(self, path=False, highres=False, normalize=False):
 
@@ -321,59 +322,6 @@ class patcher(object):
 
             return 0
 
-        elif (mode == 'testing'):
-
-            print('preparing test image')
-
-            # load the consensus
-            con = self.load_image(path=path_table.loc[patient]['Consensus'])
-            self.consensus = con
-            pos_coords = tuple(zip(*(np.nonzero(self.consensus))))
-
-            # i am fetching mask coordinates because all coordinates
-            # are way too many... 40 million
-            # get coordinates
-            # sloppy way to get all coordinates, but it works
-            # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
-            mask_coords = tuple(zip(*(np.nonzero(self.mask))))
-
-            print('fetching {} patches'.format(len(mask_coords)))
-
-            # get patches... based on mask_coords
-            patches = self.get_patches(img=self.flair, 
-                                       num_patches='test',
-                                       coords=mask_coords)
-            '''
-            patches = ex.get_patches(img=ex.flair, 
-                                       num_patches='test',
-                                       coords=mask_coords)
-
-            for ptch in patches:
-                if ex.consensus[ptch.coords]:
-                    ptch.label = '1'
-                else:
-                    ptch.label = '0'
-
-            check = 0
-            for ptch in patches: check = check + int(ptch.label)
-            '''
-
-            for ptch in patches:
-                if self.consensus[ptch.coords]:
-                    ptch.label = '1'
-                else:
-                    ptch.label = '0'
-
-            self.patches = patches
-
-            # reshape patches to meet (x, y, z) criteria
-            self.patches_xyz = patches
-            for i in np.arange(len(self.patches_xyz)):
-                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 0, 1)
-                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
-                
-            return 0
-
         elif (mode == 'network2_train'):
 
             print('preparing network 2 training patches')
@@ -450,6 +398,71 @@ class patcher(object):
                 self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
                 
             return 0
+
+        elif (mode == 'classify'):
+            
+            # if its the first iteration, do some prep
+            if (self.classify_iter_number == 0):
+
+                print('preparing image')
+    
+                # i am fetching mask coordinates because all coordinates
+                # are way too many... 40 million... to save memory on patches
+                # i use the mask
+                # flair_coords = tuple(zip(*(np.where(self.mask >= 0))))
+                mask_coords = tuple(zip(*(np.nonzero(self.mask))))
+                print('{} pixels in the FLAIR will be classified'.format(len(mask_coords)))
+                
+                # unique list of valid slices
+                slices = [coord[0] for coord in mask_coords]
+                self.slices = list(set(slices))
+                
+                # index number
+                slice_idx = self.slices[0]
+
+            else:
+                
+                # if not first iteration, increment slice index number
+                slice_idx = self.slices[self.classify_iter_number]
+
+
+            print('classifying slice number {}'.format(slice_idx))
+
+            # get coordinates in current slice
+            coords = tuple(zip(*(np.nonzero(self.mask[slice_idx, :, :]))))
+            coords = [[slice_idx] + list(coord) for coord in coords]
+
+            # get patches... based on mask_coords
+            patches = self.get_patches(img=self.flair, 
+                                       num_patches='test',
+                                       coords=coords)
+            self.patches = patches
+
+            # reshape patches to meet (x, y, z) criteria
+            self.patches_xyz = patches
+            for i in np.arange(len(self.patches_xyz)):
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 0, 1)
+                self.patches_xyz[i].array = np.moveaxis(self.patches_xyz[i].array, 1, 2)
+            
+            # increase classify iteration index
+            self.classify_iter_number = self.classify_iter_number + 1
+                
+            return 0
+            '''
+            patches = ex.get_patches(img=ex.flair, 
+                                       num_patches='test',
+                                       coords=mask_coords)
+
+            for ptch in patches:
+                if ex.consensus[ptch.coords]:
+                    ptch.label = '1'
+                else:
+                    ptch.label = '0'
+
+            check = 0
+            for ptch in patches: check = check + int(ptch.label)
+            '''
+
             
 '''
 debug = False
