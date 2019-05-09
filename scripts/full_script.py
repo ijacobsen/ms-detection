@@ -30,10 +30,10 @@ import numpy as np
 import os
 
 # %%    CONFIGURATION
-patch_size = (11, 11, 11)
+patch_size = (11, 11, 11) #(x, y, z)
 num_channels = 1
-batch_sz = 16
-epochs_hp = 30
+batch_sz = 32
+epochs_hp = 300
 num_pats = 5
 
 # get list of available directories
