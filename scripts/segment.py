@@ -16,7 +16,7 @@ print('data loaded')
 # choose a patient
 patient_list = df.index
 patient = patient_list[0]
-
+patient = '01016SACH'
 # set directory where models exist
 mdl_dir = 'trained_models'
 

@@ -219,29 +219,31 @@ class classifier(object):
         # find positive patches from network1
         patches = [ptch for ptch in self.patches if ptch.label == '1']
         
-        #coords = [ptch[:3] for ptch in self.n1_seg if ptch[3] == '1']
-        
-        # reformat data to feed into keras
-        xdata = self.patches_to_x_array(patches=patches)
-        
-        y_hat = self.network2.predict(x=xdata,
-                                      batch_size=batch_size)
-        '''
-        for debugging without using keras
-        y_hat = np.random.randint(0, 2, xdata.shape[0])
-        y_hat = keras.utils.to_categorical(y_hat, 2)
-        '''
+        #coords = [ptch[:3] for ptch in self.n1_seg if ptch[3] == '1']       
 
-        # threshold predictions... [0, 1] is a positive example
-        for i in np.arange(len(patches)):
-            if y_hat[i, 1] > 0.5:
-                patches[i].label = '1'
-            else:
-                patches[i].label = '0'
+        if (len(patches) > 0): 
+
+            # reformat data to feed into keras
+            xdata = self.patches_to_x_array(patches=patches)
         
-        # store network 1 segmentation [x, y, z, label]
-        n2_slice_seg = [ptch.coords + [ptch.label] for ptch in patches]
-        self.n2_seg.append(n2_slice_seg)
+            y_hat = self.network2.predict(x=xdata,
+                                          batch_size=batch_size)
+            '''
+            for debugging without using keras
+            y_hat = np.random.randint(0, 2, xdata.shape[0])
+            y_hat = keras.utils.to_categorical(y_hat, 2)
+            '''
+
+            # threshold predictions... [0, 1] is a positive example
+            for i in np.arange(len(patches)):
+                if y_hat[i, 1] > 0.5:
+                    patches[i].label = '1'
+                else:
+                    patches[i].label = '0'
+        
+            # store network 1 segmentation [x, y, z, label]
+            n2_slice_seg = [ptch.coords + [ptch.label] for ptch in patches]
+            self.n2_seg.append(n2_slice_seg)
         
         return 0
     
