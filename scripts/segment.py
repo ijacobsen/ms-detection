@@ -17,8 +17,16 @@ print('data loaded')
 patient_list = df.index
 patient = patient_list[0]
 
+# set directory where models exist
 mdl_dir = 'trained_models'
+
+# classify FLAIR image
 classifier = ml.classifier(mode='classify', name=patient,
                            path=mdl_dir, data=df)
-
 [n1, n2] = classifier.classify_scan(patient=patient)
+
+# save classified pixels to file
+np.save('{}_segmentations'.format(patient), [n1, n2])
+
+# to load
+#[n1, n2] = np.load('{}_segmentations.npy'.format(patient))

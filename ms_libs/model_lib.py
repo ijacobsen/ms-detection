@@ -190,13 +190,13 @@ class classifier(object):
         # reformat data to feed into keras
         xdata = self.patches_to_x_array(patches=self.patches)
         
-        # REMOVE COMMENT... for debugging
-        '''
         y_hat = self.network1.predict(x=xdata,
                                       batch_size=batch_size)
         '''
+        for debugging without keras
         y_hat = np.random.randint(0, 2, xdata.shape[0])
         y_hat = keras.utils.to_categorical(y_hat, 2)
+        '''
 
         # threshold predictions... [0, 1] is a positive example
         for i in np.arange(len(self.patches)):
@@ -224,12 +224,13 @@ class classifier(object):
         # reformat data to feed into keras
         xdata = self.patches_to_x_array(patches=patches)
         
-        '''
         y_hat = self.network2.predict(x=xdata,
                                       batch_size=batch_size)
         '''
+        for debugging without using keras
         y_hat = np.random.randint(0, 2, xdata.shape[0])
         y_hat = keras.utils.to_categorical(y_hat, 2)
+        '''
 
         # threshold predictions... [0, 1] is a positive example
         for i in np.arange(len(patches)):
@@ -284,6 +285,15 @@ class classifier(object):
 
             # find patches that classified as positive in network1 and send to n2
             self.classify_network2()
+            
+            coords = []
+            for coord in self.n1_seg:
+                coords = coords + coord
+            self.n1 = np.array(coords)
+            coords = []
+            for coord in self.n2_seg:
+                coords = coords + coord
+            self.n2 = np.array(coords)
         
-        return [self.n1_seg, self.n2_seg]
+        return [self.n1, self.n2]
 
