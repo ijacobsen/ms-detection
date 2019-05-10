@@ -1,0 +1,27 @@
+
+15 images 
+
+1 for each scanning machine for test and validation
+
+3 for testing
+
+3 for validation
+
+9 for training
+
+increase size of dataset
+
+sample for network 2 patches with highest probabilitiyd
+
+
+babysit first epoch
+
+try 10 epochs, batch size 64
+
+
+what i did first
+
+show understanding of lesions
+talk about diesease a little bit
+
+
