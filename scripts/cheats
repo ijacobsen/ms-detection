@@ -9,5 +9,9 @@ squeue -u ij405
 
 https://github.com/cvalenzuela/hpc
 
+to run interactive
+srun -t08:00:00 --mem=64GB --gres=gpu:1 --pty /bin/bash
 
-
+to check GPU usage
+ssh gpu-51 # note: must SSH into GPU node that is being used
+watch -n1 nvidia-smi

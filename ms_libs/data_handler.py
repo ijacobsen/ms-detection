@@ -218,7 +218,7 @@ class patcher(object):
 
         return patch_list
 
-    def patchify(self, path_table, patient, num_patches=300,
+    def patchify(self, path_table, patient, num_patches=30000,
                  modals=False, mode='modeless'):
 
         ## ADD ~~TESTING~~ PATCHIFY AT A LATER POINT TODO
@@ -230,6 +230,7 @@ class patcher(object):
 
         # coordinates where the brain is present
         valid_coords = tuple(zip(*(np.nonzero(mask))))
+        shuffle(valid_coords)
 
         if (not modals):
 
@@ -252,10 +253,12 @@ class patcher(object):
 
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
-            min_dist = (1, 4, 4)
+            # WAS (1, 4, 4)
+            min_dist = (2, 2, 2)
 
             # downsample because coords are ordered, and below code is O(n^2)
-            ds_pos_coords = pos_coords[::20]
+            # WAS downsampled by 20
+            ds_pos_coords = pos_coords[::5]
 
             # finds good candidates... slow O(n^2) in ds_pos_coords
             pos_used = [pos_coords[0], pos_coords[-1]]
