@@ -33,7 +33,7 @@ import os
 patch_size = (11, 11, 11) #(x, y, z)
 num_channels = 1
 batch_sz = 64
-epochs_hp = 25
+epochs_hp = 35
 num_pats = 'all'
 
 # get list of available directories

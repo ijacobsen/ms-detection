@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
-#SBATCH --time=8:00:00
+#SBATCH --time=32:00:00
 #SBATCH --mem=64GB
-#SBATCH --job-name=777
+#SBATCH --job-name=nice
 #SBATCH --mail-type=END
 #SBATCH --mail-user=ij405@nyu.edu
 #SBATCH --output=slurm_%j.out
