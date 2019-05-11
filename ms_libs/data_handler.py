@@ -289,7 +289,7 @@ class patcher(object):
                         used_img[coord] = 1
             
             # positive coordinates to use
-            pos_used = tuple(zip(*(np.nonzero(used_img))))
+            pos_used = list(zip(*(np.nonzero(used_img))))
 
             # shuffle coordinates
             shuffle(pos_used)
