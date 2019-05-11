@@ -34,7 +34,7 @@ patch_size = (11, 11, 11) #(x, y, z)
 num_channels = 1
 batch_sz = 64
 epochs_hp = 25
-num_pats = 8
+num_pats = 'all'
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -47,7 +47,7 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-patient_list = patient_list[:num_pats] # TODO remove this line
+#patient_list = patient_list[:num_pats] # TODO remove this line
 
 log_help = ll.logger(filename='log_btch{}_p{}_epochs{}'.format(batch_sz, len(patient_list), epochs_hp), message='first write')
 
