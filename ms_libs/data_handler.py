@@ -255,17 +255,42 @@ class patcher(object):
             # we have a lot of positive examples, so lets set a minimum
             # distance between coordinates to use in training
             # WAS (1, 4, 4)
-            min_dist = (2, 2, 2)
+            min_dist = (1, 4, 4)
 
             # downsample because coords are ordered, and below code is O(n^2)
             # WAS downsampled by 20
-            ds_pos_coords = pos_coords[::20]
-
+            ds_pos_coords = pos_coords[::5]
+            
+            
+            '''
+            this is a major bootleneck in the code
+            this is the correct way to do it, but for the sake of 
+            a quicker runtime i will just downsample
             # finds good candidates... slow O(n^2) in ds_pos_coords
             pos_used = [pos_coords[0], pos_coords[-1]]
             [pos_used.append(coord) for coord in ds_pos_coords if (np.apply_along_axis(np.any, 1, 
              np.abs(np.array(coord) - np.array(pos_used)) > np.array(min_dist)).all())]
+            '''
+
+            # actually i will hash using an image
+            pos_used = [pos_coords[0]]
+            used_img = 0*np.copy(self.consensus)
+            used_img[pos_used[0]] = 1
+            for coord in ds_pos_coords:
+                
+                # make sure coordinate is in bounds
+                if ((coord[0]<used_img.shape[0]) and 
+                    (coord[1]<used_img.shape[1]) and 
+                    (coord[2]<used_img.shape[2])):
+                    
+                    if (np.max(used_img[coord[0]-min_dist[0]:coord[0]+min_dist[0],
+                                        coord[1]-min_dist[1]:coord[1]+min_dist[1],
+                                        coord[2]-min_dist[2]:coord[2]+min_dist[2]]) < 0.5):                      
+                        used_img[coord] = 1
             
+            # positive coordinates to use
+            pos_used = tuple(zip(*(np.nonzero(used_img))))
+
             # shuffle coordinates
             shuffle(pos_used)
 
