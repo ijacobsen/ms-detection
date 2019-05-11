@@ -230,6 +230,7 @@ class patcher(object):
 
         # coordinates where the brain is present
         valid_coords = tuple(zip(*(np.nonzero(mask))))
+        valid_coords = list(valid_coords)
         shuffle(valid_coords)
 
         if (not modals):
