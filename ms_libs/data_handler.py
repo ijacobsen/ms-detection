@@ -259,7 +259,7 @@ class patcher(object):
 
             # downsample because coords are ordered, and below code is O(n^2)
             # WAS downsampled by 20
-            ds_pos_coords = pos_coords[::5]
+            ds_pos_coords = pos_coords[::20]
 
             # finds good candidates... slow O(n^2) in ds_pos_coords
             pos_used = [pos_coords[0], pos_coords[-1]]
