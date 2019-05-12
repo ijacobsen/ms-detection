@@ -208,8 +208,8 @@ class classifier(object):
             else:
                 self.patches[i].label = '0'
         
-        # store network 1 segmentation [x, y, z, label]
-        n1_slice_seg = [ptch.coords + [ptch.label] for ptch in self.patches]
+        # store network 1 segmentation [x, y, z, label]... only sotre positive
+        n1_slice_seg = [ptch.coords + [ptch.label] for ptch in self.patches if ptch.label == '1']
         self.n1_seg.append(n1_slice_seg)
         
         return 0
@@ -243,8 +243,8 @@ class classifier(object):
                 else:
                     patches[i].label = '0'
         
-            # store network 1 segmentation [x, y, z, label]
-            n2_slice_seg = [ptch.coords + [ptch.label] for ptch in patches]
+            # store network 1 segmentation [x, y, z, label]... only save positive patches
+            n2_slice_seg = [ptch.coords + [ptch.label] for ptch in patches if ptch.label == '1']
             self.n2_seg.append(n2_slice_seg)
         
         return 0
@@ -277,9 +277,13 @@ class classifier(object):
         self.ex = dh.patcher(patch_size=self.patch_size)
         slices = self.ex.patchify(path_table=self.df, patient=patient,
                                   mode='classify')
+        
+        print('there are {} slices'.format(len(slices)))
 
         for sl in slices:
-            
+
+            print('classifying slices number {}'.format(sl))
+
             # get patches
             self.ex.patchify(path_table=self.df, patient=patient, mode='classify')
             self.patches = self.ex.patches_xyz
@@ -289,15 +293,15 @@ class classifier(object):
 
             # find patches that classified as positive in network1 and send to n2
             self.classify_network2()
-            
-            coords = []
-            for coord in self.n1_seg:
-                coords = coords + coord
-            self.n1 = np.array(coords)
-            coords = []
-            for coord in self.n2_seg:
-                coords = coords + coord
-            self.n2 = np.array(coords)
+
+        coords = []
+        for coord in self.n1_seg:
+            coords = coords + coord
+        self.n1 = np.array(coords)
+        coords = []
+        for coord in self.n2_seg:
+            coords = coords + coord
+        self.n2 = np.array(coords)
         
         return [self.n1, self.n2]
 
