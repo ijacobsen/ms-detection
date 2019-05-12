@@ -1,10 +1,9 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=2
-#SBATCH --gres=gpu:1
-#SBATCH --time=8:00:00
-#SBATCH --mem=32GB
+#SBATCH --cpus-per-task=8
+#SBATCH --time=32:00:00
+#SBATCH --mem=64GB
 #SBATCH --job-name=segment
 #SBATCH --mail-type=END
 #SBATCH --mail-user=ij405@nyu.edu
