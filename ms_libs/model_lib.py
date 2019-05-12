@@ -183,7 +183,7 @@ class classifier(object):
 
         print('networks loaded')
 
-    def classify_network1(self, batch_size=16):
+    def classify_network1(self, batch_size=128):
         
         print('classifying patches through network 1')
     
@@ -212,7 +212,7 @@ class classifier(object):
         
         return 0
     
-    def classify_network2(self, batch_size=16):
+    def classify_network2(self, batch_size=128):
         
         print('classifying patches through network 2')
         
