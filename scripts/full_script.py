@@ -35,6 +35,8 @@ num_channels = 1
 batch_sz = 64
 epochs_hp = 36
 num_pats = 'all'
+n1_lr = 0.05
+n2_lr = 0.005
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -49,7 +51,7 @@ print('data loaded')
 patient_list = df.index
 #patient_list = patient_list[:num_pats] # TODO remove this line
 
-log_help = ll.logger(filename='log_btch{}_p{}_epochs{}'.format(batch_sz, len(patient_list), epochs_hp), message='first write')
+log_help = ll.logger(filename='log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -113,7 +115,7 @@ for k in range(len(patient_list)):
 
     # initiate model
     model_name = 'lv1out_network1_{}'.format(patient_list[k])
-    model = ml.cnn_model(name=model_name, mode='train')
+    model = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
     # train model
     model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
@@ -215,7 +217,7 @@ for k in range(len(patient_list)):
 
     # initiate model
     model_name = 'lv1out_network2_{}'.format(patient_list[k])
-    model = ml.cnn_model(name=model_name, mode='train')
+    model = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
     # train model
     model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,

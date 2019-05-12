@@ -26,7 +26,7 @@ layer    type    input size          maps    size    stride     pad
 class cnn_model(object):
     
     def __init__(self, mode='train', patch_size=(11, 11, 11),
-                 num_channels=1, name='mdl', path='none'):
+                 num_channels=1, name='mdl', path='none', lr='0.1'):
         self.name = name
         self.history = 0
 
@@ -34,6 +34,7 @@ class cnn_model(object):
             self.patch_size = patch_size
             self.num_channels = num_channels
             self.model = False
+            self.lr = lr
             self.build_graph()
             self.compile_graph()
             print('CNN model created')
@@ -93,16 +94,17 @@ class cnn_model(object):
 
         print('compiling graph')
         self.model.compile(loss=categorical_crossentropy,
-                           optimizer=Adadelta(lr=0.001),
+                           optimizer=Adadelta(lr=self.lr),
                            metrics=['acc'])
     
     def train_network(self, xtrain=0, ytrain=0, batch_size=16,
                       epochs=100, val=0.2):
 
         print('training model')
+        self.btchsz = batch_size
         self.model.fit(x=xtrain,
                        y=ytrain,
-                       batch_size=batch_size,
+                       batch_size=self.btchsz,
                        epochs=epochs,
                        validation_split=val)
 
@@ -124,10 +126,10 @@ class cnn_model(object):
         print('saving model')
 
         # save weights
-        self.model.save_weights('b64_learning_rate_1e-3{}_weights.h5'.format(self.name))
+        self.model.save_weights('_weights_lr={}_btch={}.h5'.format(self.name, self.lr, self.btchsz))
 
         # save architecture
-        with open('b64_learning_rate_1e-3{}_architecture.json'.format(self.name), 'w') as f:
+        with open('_architecture_lr={}_btch={}.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
             f.write(self.model.to_json())
 
     def load_model(self):
