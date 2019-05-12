@@ -93,7 +93,7 @@ class cnn_model(object):
 
         print('compiling graph')
         self.model.compile(loss=categorical_crossentropy,
-                           optimizer=Adadelta(lr=0.1),
+                           optimizer=Adadelta(lr=0.001),
                            metrics=['acc'])
     
     def train_network(self, xtrain=0, ytrain=0, batch_size=16,
@@ -124,10 +124,10 @@ class cnn_model(object):
         print('saving model')
 
         # save weights
-        self.model.save_weights('{}_weights.h5'.format(self.name))
+        self.model.save_weights('b64_learning_rate_1e-3{}_weights.h5'.format(self.name))
 
         # save architecture
-        with open('{}_architecture.json'.format(self.name), 'w') as f:
+        with open('b64_learning_rate_1e-3{}_architecture.json'.format(self.name), 'w') as f:
             f.write(self.model.to_json())
 
     def load_model(self):

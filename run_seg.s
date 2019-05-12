@@ -3,7 +3,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:1
-#SBATCH --time=5:00:00
+#SBATCH --time=8:00:00
 #SBATCH --mem=32GB
 #SBATCH --job-name=segment
 #SBATCH --mail-type=END
