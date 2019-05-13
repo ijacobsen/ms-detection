@@ -9,14 +9,6 @@ patient = '01016SACH'
 filename = patient + '_segmentations.npy'
 [n1, n2] = np.load(filename)
 
-
-
-seg_coords = []
-for sl in seg_results:
-    seg_coords.append(sl)
-
-seg_coords = list(list(list(list(seg_results))))
-
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
 dir_list = [di for di in dir_list if di[0] == '0']
@@ -25,4 +17,18 @@ dir_list = [di for di in dir_list if di[0] == '0']
 print('loading data')
 df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
+
+# load consensus
+ex = dh.patcher()
+con = ex.load_image(path=df.loc[patient]['Consensus'])
+
+# create segmented images
+seg_img_n1 = np.zeros(shape=con.shape)
+for coord in n1:
+    seg_img_n1[tuple(coord[:3].astype(int))] = 1
+
+seg_img_n2 = np.zeros(shape=con.shape)
+for coord in n2:
+    seg_img_n2[tuple(coord[:3].astype(int))] = 1
+
 

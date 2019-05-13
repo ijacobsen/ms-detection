@@ -4,12 +4,14 @@ import yaml
 from matplotlib import pyplot as plt
 
 dir_name = 'crossval_eval'
-btch_sz = 16
+btch_sz = 64
 p = 15
-epoch_sz = 35
-lr = 0.1
+epoch_sz = 60
+n1lr = '0.05'
+n2lr = '0.005'
 #file_name = 'log_btch{}_epochs{}'.format(btch_sz, epoch_sz)
-file_name = 'log_btch{}_p{}_epochs{}'.format(btch_sz, p, epoch_sz)
+file_name = 'log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(btch_sz, p, 
+                                                             epoch_sz, n1lr, n2lr)
 
 
 network1_df = pd.DataFrame(index=['acc', 'loss', 'val_acc', 'val_loss'])
@@ -81,6 +83,6 @@ for patient in patient_list:
     #plt.title('{} batch size = {}, {} patients'.format(patient, btch_sz, pat_len))
     #plt.savefig('{}_b{}_p{}__train_loss_dropout.png'.format(patient, btch_sz, pat_len), dpi=100)
     plt.tight_layout()
-    plt.suptitle('lr={}_{}_b{}_p{}__dropout.png'.format(lr, patient, btch_sz, pat_len))
-    plt.savefig('lr={}_{}_b{}_p{}__dropout.png'.format(lr, patient, btch_sz, pat_len), dpi=100)
+    plt.suptitle('n1lr={}_n2lr={}_b{}_p{}__dropout.png'.format(n1lr, n2lr, patient, btch_sz, pat_len))
+    plt.savefig('n1lr={}_n2lr={}_b{}_p{}__dropout.png'.format(n1lr, n2lr, patient, btch_sz, pat_len), dpi=100)
     
