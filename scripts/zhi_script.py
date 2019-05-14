@@ -115,7 +115,7 @@ for patient in val_pats:
 
     # stack example patches to feed into NN
     x_val = [ptch.array for ptch in patches]
-    xval = np.ndarray((len(x_train),
+    xval = np.ndarray((len(x_val),
                        x_val[0].shape[0],
                        x_val[0].shape[1],
                        x_val[0].shape[2],
@@ -347,5 +347,5 @@ network2.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
 
 log_help.update_logger('===========================================')
 log_help.update_logger('===========================================')
-log_help.update_logger('zhi_network2'
+log_help.update_logger('zhi_network2')
 log_help.update_logger(network2.history)
