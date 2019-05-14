@@ -101,9 +101,18 @@ class cnn_model(object):
                       epochs=100, val=0.2):
 
         print('training model')
+        
+        # shuffle patches
+        idx = np.random.choice(np.arange(ytrain.shape[0]),
+                               size=ytrain.shape[0],
+                               replace=False)
+        
+        x = xtrain[idx, :, :, :, :]
+        y = ytrain[idx, :]
+        
         self.btchsz = batch_size
-        self.model.fit(x=xtrain,
-                       y=ytrain,
+        self.model.fit(x=x,
+                       y=y,
                        batch_size=self.btchsz,
                        epochs=epochs,
                        validation_split=val)
@@ -126,10 +135,10 @@ class cnn_model(object):
         print('saving model')
 
         # save weights
-        self.model.save_weights('_weights_lr={}_btch={}.h5'.format(self.name, self.lr, self.btchsz))
+        self.model.save_weights('{}_weights_lr={}_btch={}.h5'.format(self.name, self.lr, self.btchsz))
 
         # save architecture
-        with open('_architecture_lr={}_btch={}.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
+        with open('{}_architecture_lr={}_btch={}.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
             f.write(self.model.to_json())
 
     def load_model(self):

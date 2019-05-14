@@ -115,16 +115,16 @@ for k in range(len(patient_list)):
 
     # initiate model
     model_name = 'lv1out_network1_{}'.format(patient_list[k])
-    model = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
+    network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
     # train model
-    model.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
-                        batch_size=batch_sz, epochs=epochs_hp)
+    network1.train_network(xtrain=xtrain_all, ytrain=ytrain_all,
+                           batch_size=batch_sz, epochs=epochs_hp)
    
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
     log_help.update_logger('lv1out_network1_{}'.format(patient_list[k])) 
-    log_help.update_logger(model.history)
+    log_help.update_logger(network1.history)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ network 2 prep ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,7 +161,7 @@ for k in range(len(patient_list)):
             xtest[i, :, :, :, 0] = x_test[i]
         ytest = np.array(ytest)
 
-        # convert target variable into one-hot
+        # convert target variable into one-hot... [1, 0] for all examples
         y_test = keras.utils.to_categorical(ytest, 2)
 
         # before stacking, 
@@ -181,28 +181,32 @@ for k in range(len(patient_list)):
             # FOR TRAINING IN NETWORK 2 .... 
 
     # make predictions
-    y_predicted = model.predict_network(xpredict=xtest_all)
-    
+    y_predicted = network1.predict_network(xpredict=xtest_all, batch_size=2048)
+
     # find false positives
-    false_pos_truth = y_predicted[:, 1] > 0.5
+    false_pos_truth = y_predicted[:, 1] > 0.7
     false_pos_x = xtest_all[false_pos_truth, :, :, :, :]
 
     # take correct amount of false positives
-    false_pos_x = false_pos_x[:xtrain_pos.shape[0]]
+    #false_pos_x = false_pos_x[:xtrain_pos.shape[0]]
     print('false_pos_x shape is {}'.format(false_pos_x.shape))
     print('xtrain_pos shape is {}'.format(xtrain_pos.shape))
 
     # take even split of training examples and stack
     if (false_pos_x.shape[0] > xtrain_pos.shape[0]):
         n2_x_train = np.vstack((xtrain_pos, false_pos_x[:xtrain_pos.shape[0], :, :, :, :]))
-        y = np.vstack((np.ones((xtrain_pos.shape[0], 1)),
-                       np.zeros((false_pos_x[:xtrain_pos.shape, :, :, :, :].shape[0], 1))))
+        #y = np.vstack((np.ones((xtrain_pos.shape[0], 1)),
+        #               np.zeros((false_pos_x[:xtrain_pos.shape, :, :, :, :].shape[0], 1))))
     else:
         n2_x_train = np.vstack((xtrain_pos[:false_pos_x.shape[0], :, :, :, :], false_pos_x))
-        y = np.vstack((np.ones((xtrain_pos[:false_pos_x.shape[0], :, :, :, :].shape[0], 1)),
-                       np.zeros((false_pos_x.shape[0], 1))))
+        #y = np.vstack((np.ones((xtrain_pos[:false_pos_x.shape[0], :, :, :, :].shape[0], 1)),
+        #               np.zeros((false_pos_x.shape[0], 1))))
+    
+    # first half are positive examples, second half are negative examples
+    y = np.ones((n2_x_train.shape[0], 1))
+    y[n2_x_train.shape[0]/2:, :] = np.zeros((n2_x_train.shape[0]/2, 1))
 
-    print('training network 2 on {} patches'.format(y.shape[0]))   
+    print('training network 2 on {} patches'.format(y.shape[0]))  
 
     # convert target variable into one-hot
     n2_y_train = keras.utils.to_categorical(y, 2)
@@ -217,16 +221,16 @@ for k in range(len(patient_list)):
 
     # initiate model
     model_name = 'lv1out_network2_{}'.format(patient_list[k])
-    model = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
+    network2 = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
     # train model
-    model.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
-                        batch_size=batch_sz, epochs=epochs_hp)
+    network2.train_network(xtrain=n2_x_train, ytrain=n2_y_train,
+                           batch_size=batch_sz, epochs=epochs_hp)
 
     log_help.update_logger('===========================================')
     log_help.update_logger('===========================================')
     log_help.update_logger('lv1out_network2_{}'.format(patient_list[k])) 
-    log_help.update_logger(model.history)
+    log_help.update_logger(network2.history)
 # %%    LAYER 2 TRAINING
 '''
 - form a new training set which uses all positive examples that were used in 
