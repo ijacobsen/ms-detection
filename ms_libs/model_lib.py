@@ -98,7 +98,7 @@ class cnn_model(object):
                            metrics=['acc'])
     
     def train_network(self, xtrain=0, ytrain=0, batch_size=16,
-                      epochs=100, val=0.2):
+                      epochs=100, val=0.2, val_data=False):
 
         print('training model')
         
@@ -111,11 +111,22 @@ class cnn_model(object):
         y = ytrain[idx, :]
         
         self.btchsz = batch_size
-        self.model.fit(x=x,
-                       y=y,
-                       batch_size=self.btchsz,
-                       epochs=epochs,
-                       validation_split=val)
+        
+        # if not specifcying validation data
+        if (not val_data):
+            self.model.fit(x=x,
+                           y=y,
+                           batch_size=self.btchsz,
+                           epochs=epochs,
+                           validation_split=val)
+
+        else:
+            self.model.fit(x=x,
+                           y=y,
+                           batch_size=self.btchsz,
+                           epochs=epochs,
+                           validation_data=val_data)
+            
 
         self.history = self.model.history.history
         #print(self.history)
