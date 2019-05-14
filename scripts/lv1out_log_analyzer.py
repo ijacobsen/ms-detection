@@ -4,11 +4,11 @@ import yaml
 from matplotlib import pyplot as plt
 
 dir_name = 'crossval_eval'
-btch_sz = 64
+btch_sz = 128
 p = 15
 epoch_sz = 60
-n1lr = '0.05'
-n2lr = '0.005'
+n1lr = '0.3'
+n2lr = '0.3'
 #file_name = 'log_btch{}_epochs{}'.format(btch_sz, epoch_sz)
 file_name = 'log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(btch_sz, p, 
                                                              epoch_sz, n1lr, n2lr)
