@@ -17,8 +17,8 @@ num_channels = 1
 batch_sz = 64
 epochs_hp = 60
 num_pats = 'all'
-n1_lr = 0.1
-n2_lr = 0.001
+n1_lr = 0.003
+n2_lr = 0.003
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -50,7 +50,7 @@ print('data loaded')
 
 patient_list = df.index
 
-log_help = ll.logger(filename='log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
+log_help = ll.logger(filename='zhi_log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
 
 
 train_pats

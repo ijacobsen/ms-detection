@@ -5,6 +5,8 @@
 *.nii.gz
 *.pkl
 slurm*
+*.json
+*.h5
 
 /py2_ms
 
