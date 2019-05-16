@@ -4,8 +4,6 @@ import logger_lib as ll
 import numpy as np
 import os
 
-# TODO coontinue here... fix zhi model names so load_Model works correctly
-
 # select hyperparameters
 n1lr = '0.03'
 n2lr = '0.003'
@@ -34,7 +32,7 @@ for patient in test_pats:
 
     # classify FLAIR image
     classifier = ml.classifier(mode='classify', name=patient,
-                               path=mdl_dir, data=df)
+                               path=mdl_dir, data=df, zhi=True)
     [n1, n2] = classifier.classify_scan(patient=patient)
     
     # save classified pixels to file

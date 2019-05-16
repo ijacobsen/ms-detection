@@ -152,7 +152,7 @@ for patient in val_pats:
 # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
 # initiate model
-model_name = 'zhi_network1_'
+model_name = 'zhi_network1'
 network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
 # train model
