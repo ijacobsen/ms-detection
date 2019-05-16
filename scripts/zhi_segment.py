@@ -27,11 +27,16 @@ test_pats = ['07043SEME',
 # set directory where models exist
 mdl_dir = '/scratch/ij405/zhi_models'
 
+# parameters
+n1params = 'lr=' + n1lr + 'btch=' + btchsz
+n2params = 'lr=' + n2lr + 'btch=' + btchsz
+
 # segment image
 for patient in test_pats:
-
+    
     # classify FLAIR image
-    classifier = ml.classifier(mode='classify', name=patient,
+    classifier = ml.classifier(mode='classify',
+                               n1name=n1params, n2name=n2params,
                                path=mdl_dir, data=df, zhi=True)
     [n1, n2] = classifier.classify_scan(patient=patient)
     

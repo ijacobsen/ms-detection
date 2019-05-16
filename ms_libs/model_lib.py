@@ -168,11 +168,15 @@ class cnn_model(object):
 class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
-                 num_channels=1, name='none', path='none', data='none', zhi=False):
+                 num_channels=1, name='none', path='none', data='none',
+                 n1name='none', n2name='none', zhi=False):
 
         self.zhi = zhi
-        self.name = name # patient that was left out
+        self.name = name 
         self.patch_size = patch_size
+
+        self.n1name = n1name
+        self.n2name = n2name
 
         if (mode == 'classify'):
             self.df = data
@@ -184,10 +188,10 @@ class classifier(object):
 
         print('loading network one')
         if (not self.zhi):
-            alias = 'lv1out_network1_'+self.name
+            alias = 'lv1out_network1_'+ self.n1name # NOTE- ADD PATIENT NAME TO CALL
             filepath = os.path.join(os.path.join('..', self.path), alias)
         else:
-            alias = self.name
+            alias = 'zhi_network1_' + self.n1name
             filepath = os.path.join(self.path, alias)
 
         # load model from JSON file
@@ -195,14 +199,14 @@ class classifier(object):
             self.network1 = model_from_json(f.read())
 
         # load weights into model
-        self.network1.load_weights(filepath+'_weights.h5' .format(self.name))
+        self.network1.load_weights(filepath+'_weights.h5' .format(self.n1name))
 
         print('loading network two')
         if (not self.zhi):
-            alias = 'lv1out_network2_'+self.name
+            alias = 'lv1out_network2_'+self.n2name
             filepath = os.path.join(os.path.join('..', self.path), alias)
         else:
-            alias = self.name
+            alias = 'zhi_network2_' + self.n2name
             filepath = os.path.join(self.path, alias)
 
         # load model from JSON file
@@ -210,7 +214,7 @@ class classifier(object):
             self.network2 = model_from_json(f.read())
 
         # load weights into model
-        self.network2.load_weights(filepath+'_weights.h5' .format(self.name))
+        self.network2.load_weights(filepath+'_weights.h5' .format(self.n2name))
 
         print('networks loaded')
 
@@ -293,7 +297,7 @@ class classifier(object):
 
             return xdata
 
-    def classify_scan(self, patient=0):
+    def classify_scan(self, patient='none'):
 
         # we need two models to be loaded for this
         # for each slide, pass all patches through first network
