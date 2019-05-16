@@ -5,9 +5,9 @@ import numpy as np
 import os
 
 # select hyperparameters
-n1lr = '0.03'
+n1lr = '0.003'
 n2lr = '0.003'
-btchsz = 128
+btchsz = 32
 epochs = 1000
 
 # get list of available directories
@@ -28,8 +28,8 @@ test_pats = ['07043SEME',
 mdl_dir = '/scratch/ij405/zhi_models'
 
 # parameters
-n1params = 'lr=' + n1lr + 'btch=' + btchsz
-n2params = 'lr=' + n2lr + 'btch=' + btchsz
+n1params = 'lr=' + n1lr + 'btch=' + str(btchsz)
+n2params = 'lr=' + n2lr + 'btch=' + str(btchsz)
 
 # segment image
 for patient in test_pats:
