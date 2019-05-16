@@ -5,10 +5,12 @@ this script renames .json and .h5 files... they were named wrong due to bug
 
 import os
 
-path = '/scratch/ij405/zhi_models'
+#path = '/scratch/ij405/zhi_models'
+#path = '/home/ij405/ms_det/scripts'
+path = '/scratch/ij405/lv1out'
 
 # get files
-file_list = os.listdir('../raw_data/')
+file_list = os.listdir(path)
 
 arch_files = [fl for fl in file_list if fl[-5:] == '.json']
 weight_files = [fl for fl in file_list if fl[-3:] == '.h5']
@@ -22,7 +24,7 @@ for arch in arch_files:
         newname = arch[:start_idx-1] + params + 'architecture.json'
     else:
         newname = arch[:start_idx] + params + 'architecture.json'
-    os.rename(arch, newname)
+    os.rename(os.path.join(path, arch), os.path.join(path,  newname))
 
 for wght in weight_files:
     
@@ -34,4 +36,4 @@ for wght in weight_files:
     else:
         newname = wght[:start_idx] + params + 'weights.h5'
     
-    os.rename(wght, newname)
+    os.rename(os.path.join(path, wght), os.path.join(path, newname))
