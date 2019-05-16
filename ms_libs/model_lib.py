@@ -146,10 +146,10 @@ class cnn_model(object):
         print('saving model')
 
         # save weights
-        self.model.save_weights('{}_weights_lr={}_btch={}.h5'.format(self.name, self.lr, self.btchsz))
+        self.model.save_weights('{}_lr={}_btch={}_weights.h5'.format(self.name, self.lr, self.btchsz))
 
         # save architecture
-        with open('{}_architecture_lr={}_btch={}.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
+        with open('{}_lr={}_btch={}_architecture.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
             f.write(self.model.to_json())
 
     def load_model(self):
@@ -168,8 +168,9 @@ class cnn_model(object):
 class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
-                 num_channels=1, name='none', path='none', data='none'):
+                 num_channels=1, name='none', path='none', data='none', zhi=False):
 
+        self.zhi = zhi
         self.name = name # patient that was left out
         self.patch_size = patch_size
 
@@ -182,8 +183,12 @@ class classifier(object):
     def load_models(self):
 
         print('loading network one')
-        alias = 'lv1out_network1_'+self.name
-        filepath = os.path.join(os.path.join('..', self.path), alias)
+        if (not self.zhi):
+            alias = 'lv1out_network1_'+self.name
+            filepath = os.path.join(os.path.join('..', self.path), alias)
+        else:
+            alias = self.name
+            filepath = os.path.join(self.path, alias)
 
         # load model from JSON file
         with open(filepath+'_architecture.json', 'r') as f:
@@ -193,8 +198,12 @@ class classifier(object):
         self.network1.load_weights(filepath+'_weights.h5' .format(self.name))
 
         print('loading network two')
-        alias = 'lv1out_network2_'+self.name
-        filepath = os.path.join(os.path.join('..', self.path), alias)
+        if (not self.zhi):
+            alias = 'lv1out_network2_'+self.name
+            filepath = os.path.join(os.path.join('..', self.path), alias)
+        else:
+            alias = self.name
+            filepath = os.path.join(self.path, alias)
 
         # load model from JSON file
         with open(filepath+'_architecture.json', 'r') as f:
