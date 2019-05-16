@@ -152,7 +152,7 @@ for patient in val_pats:
 # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
 # initiate model
-model_name = 'zhi_network1'
+model_name = 'zhi_network1_n1lr={}_n2lr={}_btch={}'.format(n1_lr, n2_lr, batch_sz)
 network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
 # train model
@@ -337,7 +337,7 @@ n2_y_val = keras.utils.to_categorical(y, 2)
 # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
 # initiate model
-model_name = 'zhi_network2'
+model_name = 'zhi_network2_n1lr={}_n2lr={}_btch={}'.format(n1_lr, n2_lr, batch_sz)
 network2 = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
 # train model
