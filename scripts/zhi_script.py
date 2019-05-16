@@ -14,10 +14,10 @@ import os
 # %%    CONFIGURATION
 patch_size = (11, 11, 11) #(x, y, z)
 num_channels = 1
-batch_sz = 128
+batch_sz = 8
 epochs_hp = 1000
 num_pats = 'all'
-n1_lr = 0.003
+n1_lr = 0.0003
 n2_lr = 0.0003
 
 # get list of available directories
