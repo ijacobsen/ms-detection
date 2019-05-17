@@ -17,7 +17,7 @@ num_channels = 1
 batch_sz = 128
 epochs_hp = 240
 num_pats = 'all'
-n1_lr = 0.003
+n1_lr = 0.03
 n2_lr = 0.003
 
 # get list of available directories
