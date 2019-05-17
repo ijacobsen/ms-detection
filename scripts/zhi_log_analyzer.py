@@ -6,9 +6,9 @@ from matplotlib import pyplot as plt
 dir_name = 'zhi_eval'
 btch_sz = 128
 p = 12
-epoch_sz = 1000
+epoch_sz = 240
 n1lr = '0.003'
-n2lr = '0.0003'
+n2lr = '0.003'
 #file_name = 'log_btch{}_epochs{}'.format(btch_sz, epoch_sz)
 file_name = 'zhi_log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(btch_sz, p, 
                                                                  epoch_sz, n1lr, n2lr)

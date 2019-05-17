@@ -146,10 +146,10 @@ class cnn_model(object):
         print('saving model')
 
         # save weights
-        self.model.save_weights('{}_lr={}_btch={}_weights.h5'.format(self.name, self.lr, self.btchsz))
+        self.model.save_weights('{}_weights.h5'.format(self.name))
 
         # save architecture
-        with open('{}_lr={}_btch={}_architecture.json'.format(self.name, self.lr, self.btchsz), 'w') as f:
+        with open('{}_architecture.json'.format(self.name), 'w') as f:
             f.write(self.model.to_json())
 
     def load_model(self):

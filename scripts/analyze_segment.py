@@ -4,9 +4,15 @@ from matplotlib import pyplot as plt
 import data_handler as dh
 import numpy as np
 
+# parameters
+batch_sz = 128
+n1lr = 0.003
+n2lr = 0.003
+params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz)
+
 # load segmentation results
 patient = '01016SACH'
-filename = patient + '_segmentations.npy'
+filename = '{}_seg_{}.npy'.format(patient, params)
 [n1, n2] = np.load(filename)
 
 # get list of available directories
