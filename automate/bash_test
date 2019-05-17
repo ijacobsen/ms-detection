@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# sh bash_test
+
+echo 'hello'
+
+python dumb_print.py $1 $2 $3
+

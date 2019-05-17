@@ -1,0 +1,8 @@
+
+
+load hyperparameters into file
+
+run python script that will call bash script and pass in arguments
+
+in bash script pass in hyperparams to python script
+
