@@ -6,8 +6,8 @@ import numpy as np
 
 # parameters
 btchsz = 32
-n1lr = '0.03'
-n2lr = '0.003'
+n1lr = '0.003'
+n2lr = '3e-05'
 params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz)
 
 # test patients
@@ -31,7 +31,7 @@ for patient in test_pats:
     
     # load segmentation results
     filename = '{}_seg_{}.npy'.format(patient, params)
-    [n1, n2] = np.load(filename)
+    [n1, n2] = np.load(filename, allow_pickle=True)
 
 
     # load consensus

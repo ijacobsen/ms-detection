@@ -49,7 +49,7 @@ print('data loaded')
 
 # choose a patient
 patient_list = df.index
-#patient_list = patient_list[:num_pats] # TODO remove this line
+patient_list = patient_list[:3] # TODO remove this line
 
 log_help = ll.logger(filename='log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
 

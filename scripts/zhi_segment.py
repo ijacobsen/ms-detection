@@ -5,8 +5,8 @@ import numpy as np
 import os
 
 # select hyperparameters
-n1lr = '0.03'
-n2lr = '0.003'
+n1lr = '0.3'
+n2lr = '0.3'
 btchsz = 128
 epochs = 240
 
