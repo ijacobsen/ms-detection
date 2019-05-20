@@ -95,7 +95,7 @@ for patient in patient_list:
     perf.loc[patient]['false positives'] = float(false_pos_count)/len(mask_coords)
     perf.loc[patient]['false negatives'] = float(false_neg_count)/len(mask_coords)
     perf.loc[patient]['dice'] = DSC(seg_img_n2, con)
-    
+    np.save('{}{}_seg_{}.npy'.format(pkl_dir, patient, params), seg_img_n2) 
     print(perf.loc[patient])
 
 perf.to_pickle('{}{}_performance.pkl'.format(pkl_dir, params))

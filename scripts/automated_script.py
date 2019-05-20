@@ -49,7 +49,7 @@ df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
 # choose a patient
-patient_list = df.index
+patient_list = list(df.index)
 #patient_list = patient_list[:3] # TODO remove this line
 
 log_help = ll.logger(filename='log_btch{}_n1lr={}_n2lr={}'.format(batch_sz, n1_lr, n2_lr), message='first write')
