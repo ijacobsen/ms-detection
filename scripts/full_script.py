@@ -51,7 +51,7 @@ print('data loaded')
 patient_list = df.index
 patient_list = patient_list[:3] # TODO remove this line
 
-log_help = ll.logger(filename='log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
+log_help = ll.logger(filename='log_btch{}_n1lr={}_n2lr={}'.format(batch_sz, n1_lr, n2_lr), message='first write')
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -114,7 +114,9 @@ for k in range(len(patient_list)):
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_network1_{}'.format(patient_list[k])
+    model_name = '{}_network1_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+                                                              n1_lr, n2_lr,
+                                                              batch_sz)
     network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
     # train model
@@ -220,7 +222,9 @@ for k in range(len(patient_list)):
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_network2_{}'.format(patient_list[k])
+    model_name = '{}_network2_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+                                                              n1_lr, n2_lr,
+                                                              batch_sz)
     network2 = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
     # train model
