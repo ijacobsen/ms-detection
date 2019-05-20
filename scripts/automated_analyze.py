@@ -9,6 +9,8 @@ import sys
 def DSC(im1, im2):
     """
     dice coefficient 2nt/na + nb.
+    
+    note: correctly classified negative patches do not improve the dice score
     """
     im1 = np.asarray(im1).astype(np.bool)
     im2 = np.asarray(im2).astype(np.bool)
@@ -26,8 +28,12 @@ def DSC(im1, im2):
     return 2. * intersection.sum() / im_sum
 
 
+def dice(tp, fn, fp):
+    
+    return (100*2*tp)/(fn + fp + 2*tp)
 
-
+    
+    
 # parameters
 n1lr = sys.argv[1]
 n2lr = sys.argv[2]
@@ -79,6 +85,7 @@ for patient in patient_list:
     correct_count = 0
     false_pos_count = 0
     false_neg_count = 0
+    true_pos_count = 0
     for coord in mask_coords:
         
         if int(seg_img_n2[coord]) == int(con[coord]):
@@ -90,12 +97,15 @@ for patient in patient_list:
         if ((seg_img_n2[coord] == 0) and (con[coord] == 1)):
             false_neg_count = false_neg_count + 1
         
+        if ((seg_img_n2[coord] == 1) and (con[coord] == 1)):
+            true_pos_count = true_pos_count + 1
+        
     perf.loc[patient]['num pixels'] = len(mask_coords)
     perf.loc[patient]['accuracy'] = float(correct_count)/len(mask_coords)
     perf.loc[patient]['false positives'] = float(false_pos_count)/len(mask_coords)
     perf.loc[patient]['false negatives'] = float(false_neg_count)/len(mask_coords)
-    perf.loc[patient]['dice'] = DSC(seg_img_n2, con)
-    np.save('{}img_{}{}_seg_{}.npy'.format(seg_dir, pkl_dir, patient, params), seg_img_n2) 
+    perf.loc[patient]['dice'] = dice(tp=true_pos_count, fn=false_neg_count, fp=false_pos_count)
+    np.save('img_{}_{}{}_seg_{}.npy'.format(seg_dir, pkl_dir, patient, params), seg_img_n2) 
     print(perf.loc[patient])
 
 # add average row
