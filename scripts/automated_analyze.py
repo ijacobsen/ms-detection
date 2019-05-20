@@ -5,29 +5,7 @@ import data_handler as dh
 import numpy as np
 import sys
 
-# the DSC function was written by Sergio Valverde
-def DSC(im1, im2):
-    """
-    dice coefficient 2nt/na + nb.
-    
-    note: correctly classified negative patches do not improve the dice score
-    """
-    im1 = np.asarray(im1).astype(np.bool)
-    im2 = np.asarray(im2).astype(np.bool)
-
-    if im1.shape != im2.shape:
-        raise ValueError("Shape mismatch: im1 and im2 must have the same shape.")
-
-    im_sum = im1.sum() + im2.sum()
-    if im_sum == 0:
-        return empty_score
-
-    # Compute Dice coefficient
-    intersection = np.logical_and(im1, im2)
-
-    return 2. * intersection.sum() / im_sum
-
-
+# dice score
 def dice(tp, fn, fp):
     
     return (100*2*tp)/(fn + fp + 2*tp)
@@ -105,7 +83,7 @@ for patient in patient_list:
     perf.loc[patient]['false positives'] = float(false_pos_count)/len(mask_coords)
     perf.loc[patient]['false negatives'] = float(false_neg_count)/len(mask_coords)
     perf.loc[patient]['dice'] = dice(tp=true_pos_count, fn=false_neg_count, fp=false_pos_count)
-    np.save('img_{}_{}{}_seg_{}.npy'.format(seg_dir, pkl_dir, patient, params), seg_img_n2) 
+    np.save('{}img_{}_seg_{}.npy'.format(seg_dir, patient, params), seg_img_n2) 
     print(perf.loc[patient])
 
 # add average row
