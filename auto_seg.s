@@ -3,9 +3,9 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
-#SBATCH --time=8:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=64GB
-#SBATCH --job-name=zhi_0.003_0.0003
+#SBATCH --job-name= $1 $2 $3
 #SBATCH --mail-type=END
 #SBATCH --mail-user=ij405@nyu.edu
 #SBATCH --output=slurm_%j.out
@@ -19,5 +19,5 @@ source activate py2_gpu
 cd ~/ms_det/scripts/
 #python ~/ms_det/trouble/test_slurm.py
 #python ~/ms_det/scripts/trouble.py
-python ~/ms_det/scripts/zhi_segment.py
+python ~/ms_det/scripts/automated_segment.py $1 $2 $3
 #python ~/ms_det/trouble/eval_perf.py

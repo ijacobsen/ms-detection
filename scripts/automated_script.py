@@ -35,9 +35,9 @@ patch_size = (11, 11, 11) #(x, y, z)
 num_channels = 1
 epochs_hp = 300
 num_pats = 'all'
-n1_lr = sys.argv[1]
-n2_lr = sys.argv[2]
-batch_sz = sys.argv[3]
+n1_lr = float(sys.argv[1])
+n2_lr = float(sys.argv[2])
+batch_sz = int(sys.argv[3])
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -49,10 +49,10 @@ df = dh.create_df(dir_list, modal='flair')
 print('data loaded')
 
 # choose a patient
-patient_list = df.index
-patient_list = patient_list[:3] # TODO remove this line
+patient_list = list(df.index)
+#patient_list = patient_list[:3] # TODO remove this line
 
-log_help = ll.logger(filename='log_btch{}_p{}_epochs{}_n1lr={}_n2lr={}'.format(batch_sz, len(patient_list), epochs_hp, n1_lr, n2_lr), message='first write')
+log_help = ll.logger(filename='log_btch{}_n1lr={}_n2lr={}'.format(batch_sz, n1_lr, n2_lr), message='first write')
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -115,7 +115,11 @@ for k in range(len(patient_list)):
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_network1_{}'.format(patient_list[k])
+    # initiate model
+    model_name = '{}_network1_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+                                                              n1_lr, n2_lr,
+                                                              batch_sz)
+
     network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
     # train model
@@ -221,7 +225,10 @@ for k in range(len(patient_list)):
     # NOTE: ytrain_all is one-hot ... [0, 1] is a positive example
 
     # initiate model
-    model_name = 'lv1out_network2_{}'.format(patient_list[k])
+    # initiate model
+    model_name = '{}_network2_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+                                                              n1_lr, n2_lr,
+                                                              batch_sz)    
     network2 = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
     # train model

@@ -168,11 +168,11 @@ class cnn_model(object):
 class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
-                 num_channels=1, name='none', path='none', data='none',
+                 num_channels=1, patient='none', path='none', data='none',
                  n1name='none', n2name='none', zhi=False):
 
         self.zhi = zhi
-        self.name = name 
+        self.patient = patient 
         self.patch_size = patch_size
 
         self.n1name = n1name
@@ -188,7 +188,7 @@ class classifier(object):
 
         print('loading network one')
         if (not self.zhi):
-            alias = 'lv1out_network1_'+ self.n1name # NOTE- ADD PATIENT NAME TO CALL
+            alias = '{}_network1_{}'.format(self.patient, self.n1name) # NOTE- ADD PATIENT NAME TO CALL
             filepath = os.path.join(os.path.join('..', self.path), alias)
         else:
             alias = 'zhi_network1_' + self.n1name
@@ -203,7 +203,7 @@ class classifier(object):
 
         print('loading network two')
         if (not self.zhi):
-            alias = 'lv1out_network2_'+self.n2name
+            alias = '{}_network2_{}'.format(self.patient, self.n2name)
             filepath = os.path.join(os.path.join('..', self.path), alias)
         else:
             alias = 'zhi_network2_' + self.n2name
