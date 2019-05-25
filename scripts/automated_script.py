@@ -38,6 +38,7 @@ num_pats = 'all'
 n1_lr = float(sys.argv[1])
 n2_lr = float(sys.argv[2])
 batch_sz = int(sys.argv[3])
+thresh = float(sys.argv[4])
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -52,7 +53,7 @@ print('data loaded')
 patient_list = list(df.index)
 #patient_list = patient_list[:3] # TODO remove this line
 
-log_help = ll.logger(filename='log_btch{}_n1lr={}_n2lr={}'.format(batch_sz, n1_lr, n2_lr), message='first write')
+log_help = ll.logger(filename='log_btch{}_n1lr={}_n2lr={}_thresh{}'.format(batch_sz, n1_lr, n2_lr, thresh), message='first write')
 
 # %%    CNN training
 for k in range(len(patient_list)):
@@ -116,9 +117,9 @@ for k in range(len(patient_list)):
 
     # initiate model
     # initiate model
-    model_name = '{}_network1_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+    model_name = '{}_network1_n1lr={}_n2lr={}_btch={}_thresh={}'.format(patient_list[k],
                                                               n1_lr, n2_lr,
-                                                              batch_sz)
+                                                              batch_sz, thresh)
 
     network1 = ml.cnn_model(name=model_name, mode='train', lr=n1_lr)
 
@@ -189,7 +190,7 @@ for k in range(len(patient_list)):
     y_predicted = network1.predict_network(xpredict=xtest_all, batch_size=2048)
 
     # find false positives
-    false_pos_truth = y_predicted[:, 1] > 0.7
+    false_pos_truth = y_predicted[:, 1] > thresh
     false_pos_x = xtest_all[false_pos_truth, :, :, :, :]
 
     # take correct amount of false positives
@@ -226,9 +227,9 @@ for k in range(len(patient_list)):
 
     # initiate model
     # initiate model
-    model_name = '{}_network2_n1lr={}_n2lr={}_btch={}'.format(patient_list[k],
+    model_name = '{}_network2_n1lr={}_n2lr={}_btch={}_thresh={}'.format(patient_list[k],
                                                               n1_lr, n2_lr,
-                                                              batch_sz)    
+                                                              batch_sz, thresh)    
     network2 = ml.cnn_model(name=model_name, mode='train', lr=n2_lr)
 
     # train model
