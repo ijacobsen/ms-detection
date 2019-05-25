@@ -21,6 +21,7 @@ print('data loaded')
 
 # test patients
 patient_list = df.index
+patient_list = patient_list[8:]
 
 # set directory where models exist
 mdl_dir = '/scratch/ij405/models'
