@@ -9,6 +9,7 @@ import sys
 n1lr = sys.argv[1]
 n2lr = sys.argv[2]
 btchsz = int(sys.argv[3])
+thresh = sys.argv[4]
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
@@ -21,16 +22,15 @@ print('data loaded')
 
 # test patients
 patient_list = df.index
-patient_list = patient_list[8:]
 
 # set directory where models exist
-mdl_dir = '/scratch/ij405/models'
+mdl_dir = '/scratch/ij405/thresh_models'
 seg_dir = '/scratch/ij405/segments/'
 
 # parameters
 n1params = 'lr=' + n1lr + 'btch=' + str(btchsz)
 n2params = 'lr=' + n2lr + 'btch=' + str(btchsz)
-params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz) 
+params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz) + '_thresh=' + thresh
 
 # segment image
 for patient in patient_list:
@@ -38,7 +38,7 @@ for patient in patient_list:
     # classify FLAIR image
     classifier = ml.classifier(mode='classify', patient=patient,
                                n1name=params, n2name=params,
-                               path=mdl_dir, data=df, zhi=False)
+                               path=mdl_dir, data=df, zhi=False, thresh=thresh)
     [n1, n2] = classifier.classify_scan(patient=patient)
     
     # save classified pixels to file

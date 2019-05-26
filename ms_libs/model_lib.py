@@ -169,11 +169,12 @@ class classifier(object):
     
     def __init__(self, mode='classify', patch_size=(11, 11, 11),
                  num_channels=1, patient='none', path='none', data='none',
-                 n1name='none', n2name='none', zhi=False):
+                 n1name='none', n2name='none', zhi=False, thresh='0.5'):
 
         self.zhi = zhi
         self.patient = patient 
         self.patch_size = patch_size
+        self.thresh = float(thresh)
 
         self.n1name = n1name
         self.n2name = n2name
@@ -235,7 +236,7 @@ class classifier(object):
 
         # threshold predictions... [0, 1] is a positive example
         for i in np.arange(len(self.patches)):
-            if y_hat[i, 1] > 0.5:
+            if y_hat[i, 1] > self.thresh:
             
                 self.patches[i].label = '1'
             else:
@@ -271,7 +272,7 @@ class classifier(object):
 
             # threshold predictions... [0, 1] is a positive example
             for i in np.arange(len(patches)):
-                if y_hat[i, 1] > 0.5:
+                if y_hat[i, 1] > self.thresh:
                     patches[i].label = '1'
                 else:
                     patches[i].label = '0'
