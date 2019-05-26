@@ -28,8 +28,8 @@ mdl_dir = '/scratch/ij405/thresh_models'
 seg_dir = '/scratch/ij405/segments/'
 
 # parameters
-n1params = 'lr=' + n1lr + 'btch=' + str(btchsz)
-n2params = 'lr=' + n2lr + 'btch=' + str(btchsz)
+n1params = 'lr=' + n1lr + 'btch=' + str(btchsz) + 'thresh=' + thresh
+n2params = 'lr=' + n2lr + 'btch=' + str(btchsz) + 'thresh=' + thresh
 params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz) + '_thresh=' + thresh
 
 # segment image
