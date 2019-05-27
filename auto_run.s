@@ -19,5 +19,5 @@ source activate py2_gpu
 cd ~/ms_det/scripts/
 #python ~/ms_det/trouble/test_slurm.py
 #python ~/ms_det/scripts/trouble.py
-python ~/ms_det/scripts/automated_script.py $1 $2 $3
+python ~/ms_det/scripts/automated_script.py $1 $2 $3 $4
 #python ~/ms_det/trouble/eval_perf.py

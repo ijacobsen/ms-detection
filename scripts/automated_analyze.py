@@ -16,7 +16,8 @@ def dice(tp, fn, fp):
 n1lr = sys.argv[1]
 n2lr = sys.argv[2]
 btchsz = int(sys.argv[3])
-params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz)
+thresh = sys.argv[4]
+params = 'n1lr=' + n1lr + '_n2lr=' + n2lr + '_btch=' + str(btchsz) + '_thresh=' + thresh
 
 # get list of available directories
 dir_list = os.listdir('../raw_data/')
