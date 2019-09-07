@@ -21,3 +21,4 @@ cd ~/ms_det/scripts/
 #python ~/ms_det/scripts/trouble.py
 python ~/ms_det/scripts/full_script.py
 #python ~/ms_det/trouble/eval_perf.py
+
